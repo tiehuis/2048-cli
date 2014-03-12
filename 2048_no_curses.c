@@ -3,13 +3,14 @@
 #include <stdio.h>  /* for printf  */
 #include <stdlib.h> /* for malloc  */
 #include <termios.h>/*             */
+#include <time.h>   /* for time    */
 #include <unistd.h> /* for getopts */
 
 // Repeat an expression y, x times */
-#define ITER(x, y)\
+#define ITER(x, expr)\
     do {\
         int i;\
-        for (i = 0; i < x; i++){y;}\
+        for (i = 0; i < x; i++){ expr;}\
     } while (0)
 
 /* Allocates a square pointer of array of arrays onto heap */
@@ -177,7 +178,8 @@ void rand_block()
 void draw_grid()
 {
     printf("SCORE: %d ", s);
-    printf(sl ? "(+%d)\n" : "\n", sl); 
+    if (sl) printf("(+%d)", sl); 
+    printf("\n"); 
 
     // alter this SZ + 1 to match abitrary grid size
     ITER(SZ + 1, printf("-----"));
@@ -218,7 +220,7 @@ int main(int argc, char **argv)
     
     /* parse options */
     int c;
-    while ((c = getopt(argc, argv, "s:b:")) != -1) {
+    while ((c = getopt(argc, argv, "hs:b:")) != -1) {
         switch (c) {
             // different board sizes
             case 's':
@@ -230,6 +232,18 @@ int main(int argc, char **argv)
             case 'b':
                 n_blocks = atoi(optarg);
                 break;
+            case 'h':
+                printf("Controls:\n"
+                       "    hjkl, wasd      Movement\n"
+                       "    q               Quit\n"
+                       "\n"
+                       "Usage:\n"
+                       "    2048 [options]\n"
+                       "\n"
+                       "Options:\n"
+                       "    -b <size>       Set the grid border length\n"
+                       "    -s <rate>       Set the block spawn rate\n");
+                exit(EXIT_SUCCESS);
         }
     }
 
