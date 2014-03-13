@@ -1,6 +1,6 @@
 #2048-cli
 
-A cli version of the game [2048](https://github.com) for your Linux terminal.
+A cli version of the game [2048](https://github.com/gabrielecirulli/2048) for your Linux terminal.
 
 ![Screenshot](http://i.imgur.com/fwZEvdh.png)
 
