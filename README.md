@@ -16,6 +16,7 @@ If you want to use the ncurses version, make sure that you have the required ncu
 ## Options
     -b <size>      Set the grid border length
     -s <rate>      Set the block spawn rate
+    -c             Enables color support (ncurses version only)
 
 ## License
 This code is licensed under the [MIT License](https://github.com/Tiehuis/2048-cli/blob/master/LICENSE).

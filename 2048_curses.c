@@ -1,6 +1,5 @@
 #include <curses.h> 
 #include <stdlib.h> /* for malloc  */
-#include <termios.h>/*             */
 #include <time.h>   /* for time    */
 #include <unistd.h> /* for getopts */
 
@@ -87,6 +86,7 @@ void merge(int d)
     
 /* move all values in the grid to the edge given by the direction pressed */
 /* would be nice to generalize this code a little so didn't need four loops */
+/* if animations are wanted, then need to alter this so it moves each square one at a time */
 void gravitate(int d)
 {
     if (d == DL) {
@@ -159,13 +159,13 @@ int space_left()
 }
 
 /* places a random block onto the grid */
-/* do this in a smarter fashion */
+/* could do this in a much smarter fashion by finding which spaces are free */
 void rand_block()
 {
     if (space_left()) {
         int x_p, y_p;
         while (g[x_p = rand() % SZ][y_p = rand() % SZ]);
-        g[x_p][y_p] = 1;
+        g[x_p][y_p] = 2;
     }
     else {
         endwin();
@@ -175,7 +175,17 @@ void rand_block()
     }
 }
 
+/* quick floor log2(n) */
+int flog2(int n)
+{
+    int k = 0;
+    while (n)
+        k++, n >>= 1;
+    return k;
+}
+
 /* draws the grid and fills it with the current values */
+/* colors just rotate around, works for now, can be confusing when you have some fairly high values on the board */
 void draw_grid(WINDOW *gamewin)
 {
     // mvwprintw will sometimes have a useless arg
@@ -188,7 +198,10 @@ void draw_grid(WINDOW *gamewin)
         mvwprintw(gamewin, yps, xps++, "|");
         for (j = 0; j < SZ; j++) {
             if (g[i][j]) {
-                mvwprintw(gamewin, yps, xps, "%*d |", MAXVAL, g[i][j]);
+                wattron(gamewin, COLOR_PAIR(flog2(g[i][j]) & 7));
+                mvwprintw(gamewin, yps, xps, "%*d", MAXVAL, g[i][j]);
+                wattroff(gamewin, COLOR_PAIR(flog2(g[i][j]) & 7));
+                mvwprintw(gamewin, yps, xps + MAXVAL, " |");
             }
             else {
                 ITER(MAXVAL + 1, waddch(gamewin, ' '));
@@ -205,19 +218,38 @@ void draw_grid(WINDOW *gamewin)
 /* parses options and stores the main game loop */
 int main(int argc, char **argv)
 {
+    /* init ncurses environment */
+    initscr();
+    cbreak();
+    noecho();
+    curs_set(FALSE);
+
     /* init variables */
     s  = 0;
     sl = 0;
-    MAXVAL = 4;
     SZ = 4;
+    MAXVAL = 4;
     CALLOC2D(g, SZ);
 
     int n_blocks = 1;
     
     /* parse options */
     int c;
-    while ((c = getopt(argc, argv, "hs:b:")) != -1) {
+    while ((c = getopt(argc, argv, "chs:b:")) != -1) {
         switch (c) {
+            // color support - assumes your terminal can display colours
+            // should still work regardless
+            case 'c':
+                start_color();
+                init_pair(1, 1, 0);
+                init_pair(2, 2, 0);
+                init_pair(3, 3, 0);
+                init_pair(4, 4, 0);
+                init_pair(5, 5, 0);
+                init_pair(6, 6, 0);
+                init_pair(7, 7, 0);
+                init_pair(8, 8, 0);
+                break;
             // different board sizes
             case 's':
                 FREE2D(g, SZ);
@@ -230,6 +262,7 @@ int main(int argc, char **argv)
                 break;
             // help menu
             case 'h':
+                endwin();
                 printf("Controls:\n"
                        "    hjkl, wasd      Movement\n"
                        "    q               Quit\n"
@@ -239,30 +272,23 @@ int main(int argc, char **argv)
                        "\n"
                        "Options:\n"
                        "    -b <size>       Set the grid border length\n"
-                       "    -s <rate>       Set the block spawn rate\n");
+                       "    -s <rate>       Set the block spawn rate\n"
+                       "    -c              Enables color support\n");
                 exit(EXIT_SUCCESS);
         }
     }
     
-    /* init ncurses environment */
-    initscr();
-    cbreak();
-    noecho();
-    keypad(stdscr, TRUE);
-    curs_set(FALSE);
-
     int width  = SZ * (MAXVAL + 2) + 1;
     int height = SZ * (MAXVAL + 2) + 2;
 
     // might center in middle of screen
     WINDOW *gamewin = newwin(height, width, 1, 1);
+    keypad(gamewin, TRUE);
 
     /* random seed */
     srand((unsigned int)time(NULL));
     ITER(2, rand_block());
     draw_grid(gamewin);
-    
-    // SCREEN IS NOT DRAWING ON THE VERY FIRST ITERATION
 
     int key;
     while (1) {

@@ -164,7 +164,7 @@ void rand_block()
     if (space_left()) {
         int x_p, y_p;
         while (g[x_p = rand() % SZ][y_p = rand() % SZ]);
-        g[x_p][y_p] = 1;
+        g[x_p][y_p] = 2;
     }
     else {
         printf("\n"
