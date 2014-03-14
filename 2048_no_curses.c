@@ -182,8 +182,8 @@ void draw_grid()
     printf("\n"); 
 
     // alter this SZ + 1 to match abitrary grid size
-    ITER(SZ + 1, printf("-----"));
-    printf("\n");
+    ITER(SZ, printf("------"));
+    printf("-\n");
     int i, j;
     for (i = 0; i < SZ; i++) {
         printf("|");
@@ -195,8 +195,8 @@ void draw_grid()
         }
         printf("\n");
     }
-    ITER(SZ + 1, printf("-----"));
-    printf("\n\n");
+    ITER(SZ, printf("------"));
+    printf("-\n\n");
 }
 
 /* store the terminal settings and call this function on exit to restore */
@@ -248,7 +248,7 @@ int main(int argc, char **argv)
     }
 
     /* random seed */
-    srand(time(NULL));
+    srand((unsigned int)time(NULL));
     ITER(2, rand_block());
     draw_grid();
 
