@@ -5,7 +5,7 @@ A cli version of the game [2048](https://github.com/gabrielecirulli/2048) for yo
 ![Screenshot](http://i.imgur.com/fwZEvdh.png)
 
 ## Installation
-If you want to use the ncurses version, make sure that you have the required ncurses library and link against this during compilation with `-lcurses`
+If you want to use the ncurses version, make sure that you have the required ncurses library and link against this during compilation with `-lcurses`. Uses the filename `.hs2048g` so ensure that you have no file of this name otherwise it will be overwritten.
 ### Get
     cd ~/$INSTALL_DIR
     wget https://raw.githubusercontent.com/Tiehuis/2048-cli/master/2048_no_curses.c
@@ -16,6 +16,7 @@ If you want to use the ncurses version, make sure that you have the required ncu
 ## Options
     -b <size>      Set the grid border length
     -s <rate>      Set the block spawn rate
+    -r             Resets hiscore. Will prompt user
     -c             Enables color support (ncurses version only)
 
 ## License

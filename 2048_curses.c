@@ -52,6 +52,12 @@ int SZ;
 int s;
 int sl;
 
+/* highscore */
+int hs;
+
+/* highscore file */
+char *file;
+
 /* Merges adjacent squares of the same value together in a certain direction */
 void merge(int d)
 {
@@ -147,6 +153,24 @@ void gravitate(int d)
     }
 }
 
+/* load hiscore */
+void load_score() {
+    FILE *fd = fopen(file, "r");
+    if (fd == NULL) fd = fopen(file, "w+");
+    if (fscanf(fd, "%d", &hs) == EOF) hs = 0;
+    fclose(fd);
+}
+
+/* saves hiscore, but only if playing on standard size grid */
+void save_score() {
+    if (s > hs && SZ == 4) {
+        hs = s;
+        FILE *fd = fopen(file, "w+");
+        fprintf(fd, "%d", hs);
+        fclose(fd);
+    }
+}
+
 /* returns if there are any available spaces left on the grid */
 int space_left()
 {
@@ -171,6 +195,7 @@ void rand_block()
         endwin();
         printf("\n"
                "YOU LOSE! - Your score was %d\n", s);
+        save_score();
         exit(EXIT_SUCCESS);
     }
 }
@@ -188,12 +213,13 @@ int flog2(int n)
 /* colors just rotate around, works for now, can be confusing when you have some fairly high values on the board */
 void draw_grid(WINDOW *gamewin)
 {
-    // mvwprintw will sometimes have a useless arg
+    // mvwprintw will sometimes have a useless arg, this is warned, but doesn't affect the program
     char *scr = sl ? "SCORE: %d (+%d)\n" : "SCORE: %d\n";
     mvwprintw(gamewin, 0, 0, scr, s, sl);
+    mvwprintw(gamewin, 1, 0, "HISCR: %d\n", hs);
 
     ITER(SZ*(MAXVAL + 2) + 1, waddch(gamewin, '-')); 
-    int i, j, xps = 0, yps = 2;
+    int i, j, xps = 0, yps = 3;
     for (i = 0; i < SZ; i++, xps = 0, yps++) {
         mvwprintw(gamewin, yps, xps++, "|");
         for (j = 0; j < SZ; j++) {
@@ -225,17 +251,20 @@ int main(int argc, char **argv)
     curs_set(FALSE);
 
     /* init variables */
+    file = ".hs2048g";
+    hs = 0;
     s  = 0;
     sl = 0;
     SZ = 4;
     MAXVAL = 4;
     CALLOC2D(g, SZ);
 
+    load_score();
     int n_blocks = 1;
     
     /* parse options */
     int c;
-    while ((c = getopt(argc, argv, "chs:b:")) != -1) {
+    while ((c = getopt(argc, argv, "rchs:b:")) != -1) {
         switch (c) {
             // color support - assumes your terminal can display colours
             // should still work regardless
@@ -248,18 +277,28 @@ int main(int argc, char **argv)
                 init_pair(5, 5, 0);
                 init_pair(6, 6, 0);
                 init_pair(7, 7, 0);
-                init_pair(8, 8, 0);
                 break;
             // different board sizes
             case 's':
                 FREE2D(g, SZ);
-                SZ = atoi(optarg);
+                int optint = atoi(optarg);
+                SZ = optint > 4 ? optint : 4;
                 CALLOC2D(g, SZ);
                 break;
             // different block spawn rate
             case 'b':
                 n_blocks = atoi(optarg);
                 break;
+            // reset hiscores
+            case 'r':
+                endwin();
+                printf("Are you sure you want to reset your highscores? (Y)es or (N)o\n");
+                int response;
+                if ((response = getchar()) == 'y' || response == 'Y') {
+                    FILE *fd = fopen(file, "w+");
+                    fclose(fd);
+                }
+                exit(EXIT_SUCCESS);
             // help menu
             case 'h':
                 endwin();
@@ -279,7 +318,7 @@ int main(int argc, char **argv)
     }
     
     int width  = SZ * (MAXVAL + 2) + 1;
-    int height = SZ * (MAXVAL + 2) + 2;
+    int height = SZ * (MAXVAL + 2) + 3;
 
     // might center in middle of screen
     WINDOW *gamewin = newwin(height, width, 1, 1);
@@ -324,6 +363,7 @@ int main(int argc, char **argv)
                 erase();
                 refresh();
                 endwin();
+                save_score();
                 exit(EXIT_SUCCESS);
             default:
                 goto retry;

@@ -52,6 +52,12 @@ int SZ;
 int s;
 int sl;
 
+/* highscore */
+int hs;
+
+/* highscore file */
+char *file;
+
 /* Merges adjacent squares of the same value together in a certain direction */
 void merge(int d)
 {
@@ -146,6 +152,24 @@ void gravitate(int d)
     }
 }
 
+/* loads hiscore */
+void load_score() {
+    FILE *fd = fopen(file, "r");
+    if (fd == NULL) fd = fopen(file, "w+");
+    if (fscanf(fd, "%d", &hs) == EOF) hs = 0;
+    fclose(fd);
+}
+
+/* saves hiscore, but only if playing on standard size grid */
+void save_score() {
+    if (s > hs && SZ == 4) {
+        hs = s;
+        FILE *fd = fopen(file, "w+");
+        fprintf(fd, "%d", hs);
+        fclose(fd);
+    }
+}
+
 /* returns if there are any available spaces left on the grid */
 int space_left()
 {
@@ -170,6 +194,7 @@ void rand_block()
         printf("\n"
                "YOU LOSE\n"
                "Your score was %d\n", s);
+        save_score();
         exit(EXIT_SUCCESS);
     }
 }
@@ -177,7 +202,8 @@ void rand_block()
 /* draws the grid and fills it with the current values */
 void draw_grid()
 {
-    printf("SCORE: %d ", s);
+    printf("HISCORE: %d |", hs);
+    printf("| SCORE: %d ", s);
     if (sl) printf("(+%d)", sl); 
     printf("\n"); 
 
@@ -210,28 +236,42 @@ void reset_term()
 /* parses options and stores the main game loop */
 int main(int argc, char **argv)
 {
+ 
     /* init variables */
+    file = ".hs2048g";
+    hs = 0;
     s  = 0;
     sl = 0;
     SZ = 4;
     CALLOC2D(g, SZ);
 
+    load_score();
     int n_blocks = 1;
     
     /* parse options */
     int c;
-    while ((c = getopt(argc, argv, "hs:b:")) != -1) {
+    while ((c = getopt(argc, argv, "rhs:b:")) != -1) {
         switch (c) {
             // different board sizes
             case 's':
                 FREE2D(g, SZ);
-                SZ = atoi(optarg);
+                int optint = atoi(optarg);
+                SZ = optint > 4 ? optint : 4;
                 CALLOC2D(g, SZ);
                 break;
             // different block spawn rate
             case 'b':
                 n_blocks = atoi(optarg);
                 break;
+            // reset hiscores
+            case 'r':
+                printf("Are you sure you want to reset your highscores? (Y)es or (N)o\n");
+                int response;
+                if ((response = getchar()) == 'y' || response == 'Y') {
+                    FILE *fd = fopen(file, "w+");
+                    fclose(fd);
+                }
+                exit(EXIT_SUCCESS);
             case 'h':
                 printf("Controls:\n"
                        "    hjkl, wasd      Movement\n"
@@ -289,7 +329,7 @@ int main(int argc, char **argv)
                 TURN(DU);
                 break;
             case 'q':
-                FREE2D(g, SZ);
+                save_score();
                 exit(EXIT_SUCCESS);
             default:
                 goto retry;
