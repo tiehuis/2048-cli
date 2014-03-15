@@ -2,10 +2,14 @@
 
 A cli version of the game [2048](https://github.com/gabrielecirulli/2048) for your Linux terminal.
 
-![Screenshot](http://i.imgur.com/fwZEvdh.png)
+#####2048_curses.c
+![Screenshot](http://i.imgur.com/QU7t5mH.png)
+
+#####2048_no_curses.c
+![Screenshot](http://i.imgur.com/fwZEvdh.png) 
 
 ## Installation
-If you want to use the ncurses version, make sure that you have the required ncurses library and link against this during compilation with `-lcurses`. Uses the filename `.hs2048g` so ensure that you have no file of this name otherwise it will be overwritten.
+If you want to use the ncurses version, make sure that you have the required ncurses library and link against this during compilation with `-lcurses`. The program creates and uses a file named `.hs2048g` in the directory it is run. Ensure that you have no file of this name in the directory otherwise it will be overwritten.
 ### Get
     cd ~/$INSTALL_DIR
     wget https://raw.githubusercontent.com/Tiehuis/2048-cli/master/2048_no_curses.c
