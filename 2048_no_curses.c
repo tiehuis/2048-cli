@@ -181,14 +181,14 @@ int space_left()
     return 0;
 }
 
-/* places a random block onto the grid */
+/* places a random block onto the grid - either a 4, or a 2 with a ratio of 1:3 respectively */
 /* do this in a smarter fashion */
 void rand_block()
 {
     if (space_left()) {
         int x_p, y_p;
         while (g[x_p = rand() % SZ][y_p = rand() % SZ]);
-        g[x_p][y_p] = 2;
+        g[x_p][y_p] = (rand() & 3) ? 2 : 4;
     }
     else {
         printf("\n"
