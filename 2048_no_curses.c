@@ -281,8 +281,8 @@ int main(int argc, char **argv)
                        "    2048 [options]\n"
                        "\n"
                        "Options:\n"
-                       "    -b <size>       Set the grid border length\n"
-                       "    -s <rate>       Set the block spawn rate\n");
+                       "    -s <size>       Set the grid border length\n"
+                       "    -b <rate>       Set the block spawn rate\n");
                 exit(EXIT_SUCCESS);
         }
     }
