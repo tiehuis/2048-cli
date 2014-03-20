@@ -18,8 +18,8 @@ If you want to use the ncurses version, make sure that you have the required ncu
     ./2048   
 
 ## Options
-    -b <size>      Set the grid border length
-    -s <rate>      Set the block spawn rate
+    -s <size>      Set the grid border length
+    -b <rate>      Set the block spawn rate
     -r             Resets hiscore. Will prompt user
     -c             Enables color support (ncurses version only)
 
