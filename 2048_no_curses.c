@@ -61,7 +61,7 @@ char *file;
 /* Merges adjacent squares of the same value together in a certain direction */
 void merge(int d)
 {
-    if (d == DL || d == DR) {
+    if (d == DL) {
         int i, j;
         for (i = 0; i < SZ; i++) {
             for (j = 0; j < SZ; j++) {
@@ -74,7 +74,7 @@ void merge(int d)
             }
         }
     }
-    else {
+    else if (d == DU) {
         int i, j;
         for (i = 0; i < SZ; i++) {
             for (j = 0; j < SZ; j++) {
@@ -83,6 +83,32 @@ void merge(int d)
                     sl += g[j][i];
                     s  += g[j][i];
                     g[j++ + 1][i] = 0;
+                }
+            }
+        }
+    }
+    else if (d == DR) {
+        int i, j;
+        for (i = SZ - 1; i >= 0; i--) {
+            for (j = SZ - 1; j >= 0; j--) {
+                if (j > 0 && g[i][j] && g[i][j] == g[i][j - 1]) {
+                    g[i][j] <<= 1;
+                    sl += g[i][j];
+                    s  += g[i][j];
+                    g[i][j-- - 1] = 0;
+                }
+            }
+        }
+    }
+    else if (d == DD) {
+        int i, j;
+        for (i = SZ - 1; i >= 0; i--) {
+            for (j = SZ - 1; j >= 0; j--) {
+                if (j > 0 && g[j][i] && g[j][i] == g[j - 1][i]) {
+                    g[j][i] <<= 1;
+                    sl += g[j][i];
+                    s  += g[j][i];
+                    g[j-- - 1][i] = 0;
                 }
             }
         }
