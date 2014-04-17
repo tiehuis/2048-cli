@@ -207,13 +207,13 @@ void save_score() {
     }
 }
 
-/* returns if there are any available spaces left on the grid */
-int space_left()
+/* returns if there are any possible moves */
+int moves_available()
 {
     int i, j;
     for (i = 0; i < SZ; i++)
         for (j = 0; j < SZ; j++)
-            if (!g[i][j])
+            if (!g[i][j] || ((i + 1 < SZ) && (g[i][j] == g[i + 1][j])) || ((j + 1 < SZ) && (g[i][j] == g[i][j + 1])))
                 return 1;
     return 0;
 }
@@ -222,18 +222,9 @@ int space_left()
 /* could do this in a much smarter fashion by finding which spaces are free */
 void rand_block()
 {
-    if (space_left()) {
-        int x_p, y_p;
-        while (g[x_p = rand() % SZ][y_p = rand() % SZ]);
-        g[x_p][y_p] = (rand() & 3) ?  2 : 4;
-    }
-    else {
-        endwin();
-        printf("\n"
-               "YOU LOSE! - Your score was %d\n", s);
-        save_score();
-        exit(EXIT_SUCCESS);
-    }
+    int x_p, y_p;
+    while (g[x_p = rand() % SZ][y_p = rand() % SZ]);
+    g[x_p][y_p] = (rand() & 3) ?  2 : 4;
 }
 
 /* quick floor log2(n) */
@@ -404,6 +395,14 @@ int main(int argc, char **argv)
                 exit(EXIT_SUCCESS);
             default:
                 goto retry;
+        }
+        
+        if (!moves_available()) {
+            endwin();
+            printf("\n"
+                   "YOU LOSE! - Your score was %d\n", s);
+            save_score();
+            exit(EXIT_SUCCESS);
         }
 
         if (moved) {
