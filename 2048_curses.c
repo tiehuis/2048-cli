@@ -28,13 +28,11 @@
         free(ptr);\
     } while (0)
 
-/* Define a sequence that should be executed each turn */
+/* should be executed each turn */
 #define TURN(x)\
-    do {\
-        gravitate(x);\
-        merge(x);\
-        gravitate(x);\
-    } while (0)
+    gravitate(x) +\
+    merge(x) +\
+    gravitate(x)
 
 /* maximum length of any value in grid, for printing */
 int MAXVAL;
@@ -59,8 +57,9 @@ int hs;
 char *file;
 
 /* Merges adjacent squares of the same value together in a certain direction */
-void merge(int d)
+int merge(int d)
 {
+    int moved = 0;
     if (d == DL) {
         int i, j;
         for (i = 0; i < SZ; i++) {
@@ -70,6 +69,7 @@ void merge(int d)
                     sl += g[i][j];
                     s  += g[i][j];
                     g[i][j++ + 1] = 0;
+                    moved = 1;
                 }
             }
         }
@@ -83,6 +83,7 @@ void merge(int d)
                     sl += g[j][i];
                     s  += g[j][i];
                     g[j++ + 1][i] = 0;
+                    moved = 1;
                 }
             }
         }
@@ -96,6 +97,7 @@ void merge(int d)
                     sl += g[i][j];
                     s  += g[i][j];
                     g[i][j-- - 1] = 0;
+                    moved = 1;
                 }
             }
         }
@@ -109,18 +111,21 @@ void merge(int d)
                     sl += g[j][i];
                     s  += g[j][i];
                     g[j-- - 1][i] = 0;
+                    moved = 1;
                 }
             }
         }
     }
+    return moved;
 }
 
     
 /* move all values in the grid to the edge given by the direction pressed */
 /* would be nice to generalize this code a little so didn't need four loops */
 /* if animations are wanted, then need to alter this so it moves each square one at a time */
-void gravitate(int d)
+int gravitate(int d)
 {
+    int moved = 0;
     if (d == DL) {
         int i, j;
         for (i = 0; i < SZ; i++) {
@@ -131,6 +136,7 @@ void gravitate(int d)
                 if (j + st < SZ) {
                     g[i][j] = g[i][j + st];
                     g[i][j + st] = 0;
+                    moved = 1;
                 }
             }
         }
@@ -145,6 +151,7 @@ void gravitate(int d)
                 if (j + st < SZ) {
                     g[j][i] = g[j + st][i];
                     g[j + st][i] = 0;
+                    moved = 1;
                 }
             }
         }
@@ -159,6 +166,7 @@ void gravitate(int d)
                 if (j - st >= 0) {
                     g[i][j] = g[i][j - st];
                     g[i][j - st] = 0;
+                    moved = 1;
                 }
             }
         }
@@ -173,10 +181,12 @@ void gravitate(int d)
                 if (j - st >= 0) {
                     g[j][i] = g[j - st][i];
                     g[j - st][i] = 0;
+                    moved = 1;
                 }
             }
         }
     }
+    return moved;
 }
 
 /* load hiscore */
@@ -355,10 +365,11 @@ int main(int argc, char **argv)
     ITER(2, rand_block());
     draw_grid(gamewin);
 
-    int key;
+    int key, moved;
     while (1) {
         /* will goto this if we didn't get a valid keypress */
         retry:;
+        moved = 0;
         key = wgetch(gamewin);
         sl = 0;
 
@@ -367,22 +378,22 @@ int main(int argc, char **argv)
             case 'h':
             case 'a':
             case KEY_LEFT:
-                TURN(DL);
+                moved = TURN(DL);
                 break;
             case 'l':
             case 'd':
             case KEY_RIGHT:
-                TURN(DR);
+                moved = TURN(DR);
                 break;
             case 'j':
             case 's':
             case KEY_DOWN:
-                TURN(DD);
+                moved = TURN(DD);
                 break;
             case 'k':
             case 'w':
             case KEY_UP:
-                TURN(DU);
+                moved = TURN(DU);
                 break;
             case 'q':
                 FREE2D(g, SZ);
@@ -395,7 +406,9 @@ int main(int argc, char **argv)
                 goto retry;
         }
 
-        ITER(n_blocks, rand_block());
-        draw_grid(gamewin);
+        if (moved) {
+            ITER(n_blocks, rand_block());
+            draw_grid(gamewin);
+        }
     }
 }
