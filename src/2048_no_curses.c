@@ -1,66 +1,25 @@
-/* animations would be nice */
+/*
+ * 2048_no_curses.c - Non-curses version that can be updated at a later time 
+ **/
 
 #include <stdio.h>  /* for printf  */
 #include <stdlib.h> /* for malloc  */
 #include <termios.h>/*             */
 #include <time.h>   /* for time    */
 #include <unistd.h> /* for getopts */
+#include "2048.h"
 
-// Repeat an expression y, x times */
-#define ITER(x, expr)\
-    do {\
-        int i;\
-        for (i = 0; i < x; i++){ expr;}\
-    } while (0)
-
-/* Allocates a square pointer of array of arrays onto heap */
-#define CALLOC2D(ptr, sz)\
-    do {\
-        int i;\
-        ptr = calloc(sz, sizeof(*ptr));\
-        for (i = 0; i < sz; i++)\
-            ptr[i] = calloc(sz, sizeof(*ptr));\
-    } while (0)
-
-/* Frees a square pointer of arrays to arrays */
-#define FREE2D(ptr, sz)\
-    do {\
-        int i;\
-        for (i = 0; i < sz; i++)\
-            free(ptr[i]);\
-        free(ptr);\
-    } while (0)
-
-/* Define a sequence that should be executed each turn */
-#define TURN(x)\
-    gravitate(x) +\
-    merge(x) +\
-    gravitate(x)
-
-/* direction enumeration */
-enum {DR, DU, DL, DD};
-
-/* grid pointer */
-int **g;
-
-/* grid size */
-int SZ;
-
-/* score, and last turn score */
-int s;
-int sl;
-
-/* highscore */
-int hs;
-
-/* highscore file */
-char *file;
+int **g; /* grid pointer */
+int SZ; /* grid size */
+int s;  /* Current score */
+int sl; /* Score for last turn */
+int hs; /* Highscore */
 
 /* Merges adjacent squares of the same value together in a certain direction */
 int merge(int d)
 {
     int moved = 0;
-    if (d == DL) {
+    if (d == DIR_LEFT) {
         int i, j;
         for (i = 0; i < SZ; i++) {
             for (j = 0; j < SZ; j++) {
@@ -74,7 +33,7 @@ int merge(int d)
             }
         }
     }
-    else if (d == DU) {
+    else if (d == DIR_UP) {
         int i, j;
         for (i = 0; i < SZ; i++) {
             for (j = 0; j < SZ; j++) {
@@ -88,7 +47,7 @@ int merge(int d)
             }
         }
     }
-    else if (d == DR) {
+    else if (d == DIR_RIGHT) {
         int i, j;
         for (i = SZ - 1; i >= 0; i--) {
             for (j = SZ - 1; j >= 0; j--) {
@@ -102,7 +61,7 @@ int merge(int d)
             }
         }
     }
-    else if (d == DD) {
+    else if (d == DIR_DOWN) {
         int i, j;
         for (i = SZ - 1; i >= 0; i--) {
             for (j = SZ - 1; j >= 0; j--) {
@@ -125,7 +84,7 @@ int merge(int d)
 int gravitate(int d)
 {
     int moved = 0;
-    if (d == DL) {
+    if (d == DIR_LEFT) {
         int i, j;
         for (i = 0; i < SZ; i++) {
             for (j = 0; j < SZ - 1; j++) {
@@ -140,7 +99,7 @@ int gravitate(int d)
             }
         }
     }
-    else if (d == DU) {
+    else if (d == DIR_UP) {
         int i, j;
         for (i = 0; i < SZ; i++) {
             for (j = 0; j < SZ - 1; j++) {
@@ -155,7 +114,7 @@ int gravitate(int d)
             }
         }
     }
-    else if (d == DR) {
+    else if (d == DIR_RIGHT) {
         int i, j;
         for (i = 0; i < SZ; i++) {
             for (j = SZ - 1; j > 0; j--) {
@@ -170,7 +129,7 @@ int gravitate(int d)
             }
         }
     }
-    else if (d == DD) {
+    else if (d == DIR_DOWN) {
         int i, j;
         for (i = 0; i < SZ; i++) {
             for (j = SZ - 1; j > 0; j--) {
@@ -190,8 +149,8 @@ int gravitate(int d)
 
 /* loads hiscore */
 void load_score() {
-    FILE *fd = fopen(file, "r");
-    if (fd == NULL) fd = fopen(file, "w+");
+    FILE *fd = fopen(HISCORE_FILE, "r");
+    if (fd == NULL) fd = fopen(HISCORE_FILE, "w+");
     if (fscanf(fd, "%d", &hs) == EOF) hs = 0;
     fclose(fd);
 }
@@ -200,7 +159,7 @@ void load_score() {
 void save_score() {
     if (s > hs && SZ == 4) {
         hs = s;
-        FILE *fd = fopen(file, "w+");
+        FILE *fd = fopen(HISCORE_FILE, "w+");
         fprintf(fd, "%d", hs);
         fclose(fd);
     }
@@ -265,7 +224,6 @@ int main(int argc, char **argv)
 {
  
     /* init variables */
-    file = ".hs2048g";
     hs = 0;
     s  = 0;
     sl = 0;
@@ -295,21 +253,12 @@ int main(int argc, char **argv)
                 printf("Are you sure you want to reset your highscores? (Y)es or (N)o\n");
                 int response;
                 if ((response = getchar()) == 'y' || response == 'Y') {
-                    FILE *fd = fopen(file, "w+");
+                    FILE *fd = fopen(HISCORE_FILE, "w+");
                     fclose(fd);
                 }
                 exit(EXIT_SUCCESS);
             case 'h':
-                printf("Controls:\n"
-                       "    hjkl, wasd      Movement\n"
-                       "    q               Quit\n"
-                       "\n"
-                       "Usage:\n"
-                       "    2048 [options]\n"
-                       "\n"
-                       "Options:\n"
-                       "    -s <size>       Set the grid border length\n"
-                       "    -b <rate>       Set the block spawn rate\n");
+                printf(USAGE_STR);
                 exit(EXIT_SUCCESS);
         }
     }
@@ -341,19 +290,19 @@ int main(int argc, char **argv)
         switch (key) {
             case 'h':
             case 'a':
-                moved = TURN(DL);
+                moved = TURN(DIR_LEFT);
                 break;
             case 'l':
             case 'd':
-                moved = TURN(DR);
+                moved = TURN(DIR_RIGHT);
                 break;
             case 'j':
             case 's':
-                moved = TURN(DD);
+                moved = TURN(DIR_DOWN);
                 break;
             case 'k':
             case 'w':
-                moved = TURN(DU);
+                moved = TURN(DIR_UP);
                 break;
             case 'q':
                 save_score();
