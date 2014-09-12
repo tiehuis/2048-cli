@@ -45,7 +45,7 @@ int merge(dir_t d)
         for (i = 0; i < grid_size - 1; i++) {
         for (j = 0; j < grid_size; j++) {
             if (grid[i][j] == grid[i + 1][j]) {
-                grid[i][j] <<= 2;
+                grid[i][j] <<= 1;
                 grid[i + 1][j] = 0;
                 score_last += grid[i][j];
                 score  += grid[i][j];
