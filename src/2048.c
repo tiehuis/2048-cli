@@ -231,23 +231,15 @@ int main(int argc, char **argv)
     
     /* parse options */
     int c;
-    while ((c = getopt(argc, argv, "rchs:b:")) != -1) {
+    int enable_color = has_colors();
+    while ((c = getopt(argc, argv, "rcChs:b:")) != -1) {
         switch (c) {
         /* Color support */
         case 'c':
-            if (has_colors()) {
-                start_color();
-                init_pair(0, 1, 0);
-                init_pair(1, 2, 0);
-                init_pair(2, 3, 0);
-                init_pair(3, 4, 0);
-                init_pair(4, 5, 0);
-                init_pair(5, 6, 0);
-                init_pair(6, 7, 0);
-            }
-            else {
-                fprintf(stderr, "Terminal does not support color\n");
-            }
+            enable_color = 1;
+            break;
+        case 'C':
+            enable_color = 0;
             break;
         // different board sizes
         case 's':;
@@ -275,7 +267,22 @@ int main(int argc, char **argv)
             exit(EXIT_SUCCESS);
         }
     }
-    
+
+    if (enable_color) {
+        if (!has_colors()) {
+            fprintf(stderr, "Terminal does not support color\n");
+        } else {
+            start_color();
+            init_pair(0, 1, 0);
+            init_pair(1, 2, 0);
+            init_pair(2, 3, 0);
+            init_pair(3, 4, 0);
+            init_pair(4, 5, 0);
+            init_pair(5, 6, 0);
+            init_pair(6, 7, 0);
+        }
+    }
+
     /* Allocate memory once we actually know amount */
     CALLOC2D(grid, grid_size);
 
