@@ -1,12 +1,21 @@
 #ifndef _2048_H_
 #define _2048_H_
 
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <string.h>
+
 typedef enum {
     DIR_UP,
     DIR_RIGHT,
     DIR_DOWN,
     DIR_LEFT
 } dir_t;
+
+#define DATADIR_NAME "2048"
+#define HIGHSCORE_FILE_NAME "highscore"
+
+const char* get_highscore_file();
 
 // Repeat an expression y, x times */
 #define ITER(x, expr)\
@@ -38,7 +47,7 @@ typedef enum {
 
 /* Constants */
 #define DEFAULT_GRID_SIZE 4
-#define HISCORE_FILE ".hs2048g"
+#define HISCORE_FILE get_highscore_file()
 #define USAGE_STR\
    "Usage:\n"\
    "    ./2048 [options]\n"\
