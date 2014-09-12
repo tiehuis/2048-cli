@@ -25,6 +25,7 @@ working directory. Any file with this name will be modified and replaced.
     -b <rate>      Set the block spawn rate
     -r             Resets hiscore. Will prompt user
     -c             Enables color support (ncurses version only)
+    -C             Disables color support (ncurses version only)
 
 ## License
 This code is licensed under the [MIT License](https://github.com/Tiehuis/2048-cli/blob/master/LICENSE).

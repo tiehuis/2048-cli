@@ -60,6 +60,6 @@ const char* get_highscore_file();
    "    -s <size>       Set the grid border length\n"\
    "    -b <rate>       Set the block spawn rate\n"\
    "    -c              Enables color support (ncurses version only)\n"\
-   "    -C              Disabled color support (ncurses version only)\n"
+   "    -C              Disables color support (ncurses version only)\n"
 
 #endif

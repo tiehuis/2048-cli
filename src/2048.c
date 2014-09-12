@@ -28,30 +28,60 @@ int merge(dir_t d)
     int moved = 0;
     int i, j;
 
-    if (d == DIR_LEFT || d == DIR_RIGHT) {
+    if (d == DIR_LEFT) {
+        /* Move from upper left, across rows until second to second-last elem each row */
         for (i = 0; i < grid_size; i++) {
-        for (j = 0; j < grid_size - 1; j++) {
-            if (grid[i][j] == grid[i][j + 1]) {
-                grid[i][j] <<= 1;
-                grid[i][j + 1] = 0;
-                score_last += grid[i][j];
-                score  += grid[i][j];
-                moved = 1;
+            for (j = 0; j < grid_size - 1; j++) {
+                if (grid[i][j] == grid[i][j + 1]) {
+                    grid[i][j] <<= 1;
+                    grid[i][j + 1] = 0;
+                    score_last += grid[i][j];
+                    score  += grid[i][j];
+                    moved = 1;
+                }
             }
-        }
         }
     }
-    else {
+    else if (d == DIR_UP) {
+        /* Move from upper left, across rows until final row which is skipped */
         for (i = 0; i < grid_size - 1; i++) {
-        for (j = 0; j < grid_size; j++) {
-            if (grid[i][j] == grid[i + 1][j]) {
-                grid[i][j] <<= 1;
-                grid[i + 1][j] = 0;
-                score_last += grid[i][j];
-                score  += grid[i][j];
-                moved = 1;
+            for (j = 0; j < grid_size; j++) {
+                if (grid[i][j] == grid[i + 1][j]) {
+                    grid[i][j] <<= 1;
+                    grid[i + 1][j] = 0;
+                    score_last += grid[i][j];
+                    score  += grid[i][j];
+                    moved = 1;
+                }
             }
         }
+    }
+    else if (d == DIR_RIGHT) {
+        /* Move from lower right, backwards across rows until first elem each row */
+        for (i = grid_size - 1; i >= 0; i--) {
+            for (j = grid_size - 1; j > 0; j--) {
+                if (grid[i][j] == grid[i][j - 1]) {
+                    grid[i][j] <<= 1;
+                    grid[i][j - 1] = 0;
+                    score_last += grid[i][j];
+                    score  += grid[i][j];
+                    moved = 1;
+                }
+            }
+        }
+    }
+    else if (d == DIR_DOWN) {
+        /* Move from lower right, across rows until first row which is skipped */
+        for (i = grid_size - 1; i > 0; i--) {
+            for (j = grid_size - 1; j >= 0; j--) {
+                if (grid[i][j] == grid[i - 1][j]) {
+                    grid[i][j] <<= 1;
+                    grid[i - 1][j] = 0;
+                    score_last += grid[i][j];
+                    score  += grid[i][j];
+                    moved = 1;
+                }
+            }
         }
     }
 
@@ -194,9 +224,9 @@ void draw_grid(WINDOW *gamewin)
         mvwprintw(gamewin, yps, xps++, "|");
         for (j = 0; j < grid_size; j++) {
             if (grid[i][j]) {
-                wattron(gamewin, COLOR_PAIR(flog2(grid[i][j]) & 7));
+                wattron(gamewin, COLOR_PAIR(flog2(grid[i][j]) % 7));
                 mvwprintw(gamewin, yps, xps, "%*d", printwidth, grid[i][j]);
-                wattroff(gamewin, COLOR_PAIR(flog2(grid[i][j]) & 7));
+                wattroff(gamewin, COLOR_PAIR(flog2(grid[i][j]) % 7));
                 mvwprintw(gamewin, yps, xps + printwidth, " |");
             }
             else {
