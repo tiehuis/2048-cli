@@ -163,7 +163,7 @@ int get_score_high() {
     if (fd == NULL) 
         fd = fopen(HISCORE_FILE, "w+");
 
-    fscanf(fd, "%d", &s);
+    if (fscanf(fd, "%d", &s) == 1) {};
     fclose(fd);
     return s;
 }
