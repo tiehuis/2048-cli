@@ -201,7 +201,7 @@ void rand_block()
 }
 
 /* quick floor log2(n) */
-int flog2(int n)
+int flog2(unsigned int n)
 {
     int k = 0;
     while (n)
