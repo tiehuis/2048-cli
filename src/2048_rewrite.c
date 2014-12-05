@@ -13,19 +13,6 @@
     } while (0)
 
 #ifdef HAVE_CURSES
-void drawstate_init(void)
-{
-    initscr();
-    cbreak();
-    noecho();
-    curs_set(FALSE);
-}
-
-void drawstate_clear(void)
-{
-    endwin();
-}
-
 void draw_screen(struct gamestate *g)
 {
     static WINDOW *gamewin;
@@ -62,6 +49,20 @@ void draw_screen(struct gamestate *g)
     }
     ITER(g->opts->grid_height*(g->print_width + 2) + 1, waddch(gamewin, '-')); 
     wrefresh(gamewin);
+}
+
+void drawstate_init(void)
+{
+    initscr();
+    cbreak();
+    noecho();
+    curs_set(FALSE);
+    refresh();
+}
+
+void drawstate_clear(void)
+{
+    endwin();
 }
 
 int get_keypress(void)
@@ -104,7 +105,7 @@ void draw_screen(struct gamestate *g)
         printf("|");
         for (x = 0; x < g->opts->grid_width; x++) {
             if (g->grid[x][y])
-                printf("%*ld |", 4, g->grid[x][y]);
+                printf("%*ld |", g->print_width, g->grid[x][y]);
             else
                 printf("     |");
         }
@@ -120,6 +121,12 @@ int get_keypress(void)
 }
 
 #endif
+
+void ddraw(struct gamestate *g)
+{
+    draw_screen(g);
+    usleep(30000);
+}
 
 int main(int argc, char **argv)
 {
@@ -137,12 +144,12 @@ int main(int argc, char **argv)
             if (ch == 'q') { goto endloop; }
         } while (strchr("hjkl", ch) == NULL);
 
-        gamestate_tick(g, ch, NULL);
-
         if (!moves_available(g)) {
             printf("You lose\n");
             break;
         }
+
+        gamestate_tick(g, ch, ddraw);
     }
 endloop:
 
