@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include "2048_engine.h"
 
-#define ITER(x, expr)\
+#define iterate(x, expr)\
     do {\
         int i;\
         for (i = 0; i < x; ++i) { expr; }\
@@ -31,7 +31,7 @@ void draw_screen(struct gamestate *g)
     mvwprintw(gamewin, 0, 0, scr, g->score, g->score_last);
     mvwprintw(gamewin, 1, 0, "HISCR: %d\n", g->score_high);
 
-    ITER(g->opts->grid_width*(g->print_width + 2) + 1, waddch(gamewin, '-')); 
+    iterate(g->opts->grid_width*(g->print_width + 2) + 1, waddch(gamewin, '-')); 
     int x, y, xps = 0, yps = 3;
     for (y = 0; y < g->opts->grid_height; y++, xps = 0, yps++) {
         mvwprintw(gamewin, yps, xps++, "|");
@@ -41,13 +41,13 @@ void draw_screen(struct gamestate *g)
                 mvwprintw(gamewin, yps, xps + g->print_width, " |");
             }
             else {
-                ITER(g->print_width + 1, waddch(gamewin, ' '));
+                iterate(g->print_width + 1, waddch(gamewin, ' '));
                 waddch(gamewin, '|');
             }
             xps += (g->print_width + 2);
         }
     }
-    ITER(g->opts->grid_height*(g->print_width + 2) + 1, waddch(gamewin, '-')); 
+    iterate(g->opts->grid_height*(g->print_width + 2) + 1, waddch(gamewin, '-')); 
     wrefresh(gamewin);
 }
 
@@ -93,7 +93,6 @@ int get_keypress(void)
     return fgetc(stdin);
 }
 
-
 void draw_screen(struct gamestate *g)
 {
     /* Clear the screen each draw if we are able to */
@@ -107,7 +106,7 @@ void draw_screen(struct gamestate *g)
     printf("\n");
 
     // alter this grid_size + 1 to match abitrary grid size
-    ITER(g->opts->grid_width, printf("------"));
+    iterate(g->opts->grid_width, printf("------"));
     printf("-\n");
     int x, y;
     for (y = 0; y < g->opts->grid_height; y++) {
@@ -120,7 +119,7 @@ void draw_screen(struct gamestate *g)
         }
         printf("\n");
     }
-    ITER(g->opts->grid_width, printf("------"));
+    iterate(g->opts->grid_width, printf("------"));
     printf("-\n\n");
 }
 #endif /* CURSES */
@@ -128,15 +127,17 @@ void draw_screen(struct gamestate *g)
 void ddraw(struct gamestate *g)
 {
     draw_screen(g);
-    usleep(30000);
+    usleep(40000);
 }
 
 int main(int argc, char **argv)
 {
-    struct gamestate *g = gamestate_init(gameoptions_default());
+    struct gamestate *g = gamestate_init(
+                            parse_options(
+                              gameoptions_default(), argc, argv));
 
     drawstate_init();
-    
+
     while (1) {
         draw_screen(g);
 
@@ -152,7 +153,7 @@ int main(int argc, char **argv)
             break;
         }
 
-        gamestate_tick(g, ch, ddraw);
+        gamestate_tick(g, ch, g->opts->animate ? ddraw : NULL);
     }
 endloop:
 

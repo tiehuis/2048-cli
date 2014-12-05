@@ -224,6 +224,8 @@ struct gameoptions* gameoptions_default(void)
     opt->goal = 2048;
     opt->spawn_value = 2;
     opt->spawn_rate = 1;
+    opt->enable_color = 0;
+    opt->animate = 1;
 
     return opt;
 }
@@ -244,4 +246,74 @@ void gamestate_clear(struct gamestate *g)
     free(g->grid[0]);
     free(g->grid);
     free(g);
+}
+
+/* The following may be moved into own file */
+void reset_highscore(void)
+{
+    printf("Are you sure you want to reset your highscores? (Y)es/(N)o: ");
+
+    int response;
+    if ((response = getchar()) == 'y' || response == 'Y') {
+        printf("Resetting highscore...\n");
+    }
+}
+
+void print_usage(void)
+{
+    printf(
+    "usage: 2048 [-cCrh] [-b <rate>] [-s <size>]\n"
+    "\n"
+    "controls\n"
+    "   hjkl        movement keys\n"
+    "   q           quit current game\n"
+    "\n"
+    "options\n"
+    "   -s <size>   set the grid side lengths\n"
+    "   -b <rate>   set the block spawn rate\n"
+    "   -a          enable animations (default)\n"
+    "   -A          disable animations\n"
+    "   -c          enable color support\n"
+    "   -C          disable color support (default)\n"
+    );
+}
+
+#include <getopt.h>
+
+struct gameoptions* parse_options(struct gameoptions *opt, int argc, char **argv)
+{
+    int c;
+    while ((c = getopt(argc, argv, "aArcChs:b:")) != -1) {
+        switch (c) {
+        case 'a':
+            opt->animate = 1;
+            break;
+        case 'A':
+            opt->animate = 0;
+            break;
+        case 'c':
+            opt->enable_color = 1;
+            break;
+        case 'C':
+            opt->enable_color = 0;
+            break;
+        case 's':;
+            /* Stick with square for now */
+            int optint = strtol(optarg, NULL, 10);
+            opt->grid_height = optint > 4 ? optint : 4;
+            opt->grid_width = optint > 4 ? optint : 4;
+            break;
+        case 'b':
+            opt->spawn_rate = strtol(optarg, NULL, 10);
+            break;
+        case 'r':
+            reset_highscore();
+            exit(0);
+        case 'h':
+            print_usage();
+            exit(0);
+        }
+    }
+
+    return opt;
 }

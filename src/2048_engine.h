@@ -18,6 +18,8 @@ struct gameoptions {
     long goal;
     long spawn_value;
     int spawn_rate;
+    int enable_color;
+    int animate;
 };
 
 struct gamestate {
@@ -30,11 +32,9 @@ struct gamestate {
     int print_width;
     /* Options */
     struct gameoptions *opts;
-    /* Draw functions */
-    void (*ds_draw)(struct gamestate*);
-    void (*ds_clear)(void);
 };
 
+struct gameoptions* parse_options(struct gameoptions*, int, char**);
 void gravitate(struct gamestate*, direction, void (*callback)(struct gamestate*));
 void merge(struct gamestate*, direction, void (*callback)(struct gamestate*));
 int  moves_available(struct gamestate *);
