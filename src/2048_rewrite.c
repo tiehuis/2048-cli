@@ -70,9 +70,7 @@ int get_keypress(void)
     return getch();
 }
 
-#elif VT100_COMPATIBLE
-
-#else
+#else /* vt100 and standard shared functions */
 struct termios sattr;
 void drawstate_clear()
 {
@@ -90,8 +88,19 @@ void drawstate_init(void)
     tcsetattr(STDOUT_FILENO, TCSANOW, &tattr);
 }
 
+int get_keypress(void)
+{
+    return fgetc(stdin);
+}
+
+
 void draw_screen(struct gamestate *g)
 {
+    /* Clear the screen each draw if we are able to */
+#ifdef VT100_COMPATIBLE
+    printf("\033[2J\033[H");
+#endif
+
     printf("HISCORE: %ld |", g->score_high);
     printf("| SCORE: %ld ", g->score);
     if (g->score_last) printf("(+%ld)", g->score_last);
@@ -114,13 +123,7 @@ void draw_screen(struct gamestate *g)
     ITER(g->opts->grid_width, printf("------"));
     printf("-\n\n");
 }
-
-int get_keypress(void)
-{
-    return fgetc(stdin);
-}
-
-#endif
+#endif /* CURSES */
 
 void ddraw(struct gamestate *g)
 {

@@ -83,13 +83,14 @@ void merge(struct gamestate *g, direction d, void (*callback)(struct gamestate *
         if (g->grid[x][y] && (g->grid[x][y] == g->grid[x+xoff][y+yoff])) {\
             g->grid[x][y] += g->grid[x+xoff][y+yoff];\
             g->grid[x+xoff][y+yoff] = 0;\
-            g->score_last = g->grid[x][y];\
+            g->score_last += g->grid[x][y];\
             g->score += g->grid[x][y];\
             g->moved = 1;\
         }\
     } while (0)
 
     int x, y;
+    g->score_last = 0;
         
     if (d == dir_left) {
         for (x = 0; x < g->opts->grid_width - 1; ++x) {
