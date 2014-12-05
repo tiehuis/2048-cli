@@ -45,12 +45,12 @@ void draw_screen(struct gamestate *g)
     mvwprintw(gamewin, 1, 0, "HISCR: %d\n", g->score_high);
 
     ITER(g->opts->grid_width*(g->print_width + 2) + 1, waddch(gamewin, '-')); 
-    int i, j, xps = 0, yps = 3;
-    for (i = 0; i < g->opts->grid_width; i++, xps = 0, yps++) {
+    int x, y, xps = 0, yps = 3;
+    for (y = 0; y < g->opts->grid_height; y++, xps = 0, yps++) {
         mvwprintw(gamewin, yps, xps++, "|");
-        for (j = 0; j < g->opts->grid_height; j++) {
-            if (g->grid[j][i]) {
-                mvwprintw(gamewin, yps, xps, "%*d", g->print_width, g->grid[j][i]);
+        for (x = 0; x < g->opts->grid_width; x++) {
+            if (g->grid[x][y]) {
+                mvwprintw(gamewin, yps, xps, "%*d", g->print_width, g->grid[x][y]);
                 mvwprintw(gamewin, yps, xps + g->print_width, " |");
             }
             else {
@@ -99,12 +99,12 @@ void draw_screen(struct gamestate *g)
     // alter this grid_size + 1 to match abitrary grid size
     ITER(g->opts->grid_width, printf("------"));
     printf("-\n");
-    int i, j;
-    for (i = 0; i < g->opts->grid_height; i++) {
+    int x, y;
+    for (y = 0; y < g->opts->grid_height; y++) {
         printf("|");
-        for (j = 0; j < g->opts->grid_width; j++) {
-            if (g->grid[j][i])
-                printf("%*ld |", 4, g->grid[j][i]);
+        for (x = 0; x < g->opts->grid_width; x++) {
+            if (g->grid[x][y])
+                printf("%*ld |", 4, g->grid[x][y]);
             else
                 printf("     |");
         }
