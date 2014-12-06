@@ -37,7 +37,7 @@ struct gamestate {
 struct gameoptions* parse_options(struct gameoptions*, int, char**);
 void gravitate(struct gamestate*, direction, void (*callback)(struct gamestate*));
 void merge(struct gamestate*, direction, void (*callback)(struct gamestate*));
-int  moves_available(struct gamestate *);
+int end_condition(struct gamestate *);
 void random_block(struct gamestate *);
 int  gamestate_tick(struct gamestate*, direction, void (*callback)(struct gamestate*));
 void gamestate_clear(struct gamestate*);;

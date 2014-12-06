@@ -131,20 +131,26 @@ void merge(struct gamestate *g, direction d, void (*callback)(struct gamestate *
 #undef merge_if_equal
 }
 
-int moves_available(struct gamestate *g)
+/* Return -1 on lose condition, 1 on win condition, 0 on
+ * haven't ended */
+int end_condition(struct gamestate *g)
 {
+    int ret = -1;
+
     int x, y;
     for (x = 0; x < g->opts->grid_width; ++x) {
         for (y = 0; y < g->opts->grid_height; ++y) {
+            if (g->grid[x][y] >= g->opts->goal)
+                return 1; 
             if (!g->grid[x][y] || ((x + 1 < g->opts->grid_width) &&
                         (g->grid[x][y] == g->grid[x+1][y]))
                     || ((y + 1 < g->opts->grid_height) && 
                         (g->grid[x][y] == g->grid[x][y+1])))
-                return 1;
+                ret = 0;
         }
     }
 
-    return 0;
+    return ret;
 }
 
 void random_block(struct gamestate *g)
@@ -262,7 +268,7 @@ void reset_highscore(void)
 void print_usage(void)
 {
     printf(
-    "usage: 2048 [-cCrh] [-b <rate>] [-s <size>]\n"
+    "usage: 2048 [-cCaArh] [-g <goal>] [-b <rate>] [-s <size>]\n"
     "\n"
     "controls\n"
     "   hjkl        movement keys\n"
@@ -271,6 +277,7 @@ void print_usage(void)
     "options\n"
     "   -s <size>   set the grid side lengths\n"
     "   -b <rate>   set the block spawn rate\n"
+    "   -g <goal>   set a new goal (default 2048)\n"
     "   -a          enable animations (default)\n"
     "   -A          disable animations\n"
     "   -c          enable color support\n"
@@ -283,7 +290,7 @@ void print_usage(void)
 struct gameoptions* parse_options(struct gameoptions *opt, int argc, char **argv)
 {
     int c;
-    while ((c = getopt(argc, argv, "aArcChs:b:")) != -1) {
+    while ((c = getopt(argc, argv, "aArcChg:s:b:")) != -1) {
         switch (c) {
         case 'a':
             opt->animate = 1;
@@ -296,6 +303,9 @@ struct gameoptions* parse_options(struct gameoptions *opt, int argc, char **argv
             break;
         case 'C':
             opt->enable_color = 0;
+            break;
+        case 'g':
+            opt->goal = strtol(optarg, NULL, 10);
             break;
         case 's':;
             /* Stick with square for now */

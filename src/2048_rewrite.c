@@ -99,15 +99,13 @@ void draw_screen(struct gamestate *g)
 #ifdef VT100_COMPATIBLE
     printf("\033[2J\033[H");
 #endif
-
-    printf("HISCORE: %ld |", g->score_high);
-    printf("| SCORE: %ld ", g->score);
-    if (g->score_last) printf("(+%ld)", g->score_last);
-    printf("\n");
+    char *scr = g->score_last ? "SCORE: %d (+%d)\n" : "SCORE: %d\n";
+    printf(scr, g->score, g->score_last);
+    printf("HISCR: %ld\n", g->score_high);
 
     // alter this grid_size + 1 to match abitrary grid size
-    iterate(g->opts->grid_width, printf("------"));
-    printf("-\n");
+    iterate((g->print_width + 2) * g->opts->grid_width + 1, printf("-"));
+    printf("\n");
     int x, y;
     for (y = 0; y < g->opts->grid_height; y++) {
         printf("|");
@@ -115,12 +113,13 @@ void draw_screen(struct gamestate *g)
             if (g->grid[x][y])
                 printf("%*ld |", g->print_width, g->grid[x][y]);
             else
-                printf("     |");
+                printf("%*s |", g->print_width, "");
         }
         printf("\n");
     }
-    iterate(g->opts->grid_width, printf("------"));
-    printf("-\n\n");
+
+    iterate((g->print_width + 2) * g->opts->grid_width + 1, printf("-"));
+    printf("\n\n");
 }
 #endif /* CURSES */
 
@@ -141,17 +140,19 @@ int main(int argc, char **argv)
     while (1) {
         draw_screen(g);
 
+        int e;
+        if ((e = end_condition(g))) {
+            drawstate_clear();
+            printf(e > 0 ? "You win\n" : "You lose\n");
+            goto endloop;
+        }
+
         /* abstract getting keypress */
         int ch;
         do {
             ch = get_keypress();
             if (ch == 'q') { goto endloop; }
         } while (strchr("hjkl", ch) == NULL);
-
-        if (!moves_available(g)) {
-            printf("You lose\n");
-            break;
-        }
 
         gamestate_tick(g, ch, g->opts->animate ? ddraw : NULL);
     }
