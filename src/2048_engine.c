@@ -190,7 +190,7 @@ struct gamestate* gamestate_init(struct gameoptions *opt)
     //long *grid_back = malloc(opt->grid_width * opt->grid_height * sizeof(long));
     //if (!grid_back) goto grid_back_alloc_fail;
    
-    g->grid = malloc(opt->grid_width, sizeof(long*));
+    g->grid = malloc(opt->grid_width * sizeof(long*));
     if (!g->grid) goto grid_alloc_fail;
 
     int i;
