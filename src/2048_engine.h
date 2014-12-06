@@ -3,7 +3,21 @@
 
 #include <stdio.h>
 
-#define fatal(msg) do { fprintf(stderr, "line %d: %s\n", __LINE__, msg); abort(); } while (0)
+#define CONSTRAINT_GRID_MIN 4
+#define CONSTRAINT_GRID_MAX 20
+#define DEFAULT_GRID_HEIGHT 4
+#define DEFAULT_GRID_WIDTH 4
+#define DEFAULT_GOAL 2048
+#define DEFAULT_SPAWN_VALUE 2
+#define DEFAULT_SPAWN_RATE 1
+#define DEFAULT_COLOR_TOGGLE 0
+#define DEFAULT_ANIMATE_TOGGLE 1
+
+#define fatal(msg)\
+    do {\
+        fprintf(stderr, "line %d: %s\n", __LINE__, msg);\
+        abort();\
+    } while (0)
 
 typedef enum {
     dir_left  = 'h',

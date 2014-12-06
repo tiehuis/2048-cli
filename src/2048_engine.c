@@ -15,7 +15,7 @@ void gravitate(struct gamestate *g, direction d, void (*callback)(struct gamesta
         }\
     } while (0)
 
-    int x, y;
+    size_t x, y;
     int done = 0;
 
     if (d == dir_left) {
@@ -89,7 +89,7 @@ void merge(struct gamestate *g, direction d, void (*callback)(struct gamestate *
         }\
     } while (0)
 
-    int x, y;
+    size_t x, y;
     g->score_last = 0;
         
     if (d == dir_left) {
@@ -137,7 +137,7 @@ int end_condition(struct gamestate *g)
 {
     int ret = -1;
 
-    int x, y;
+    size_t x, y;
     for (x = 0; x < g->opts->grid_width; ++x) {
         for (y = 0; y < g->opts->grid_height; ++y) {
             if (g->grid[x][y] >= g->opts->goal)
@@ -164,8 +164,8 @@ void random_block(struct gamestate *g)
         srand(time(NULL));
     }
 
-    int x = rand() % g->opts->grid_width;
-    int y = rand() % g->opts->grid_height;
+    size_t x = (size_t)rand() % g->opts->grid_width;
+    size_t y = (size_t)rand() % g->opts->grid_height;
 
     while (g->grid[x][y]) {
         x++;
@@ -183,7 +183,7 @@ static int flog10(unsigned int n)
 {
     int l = 0;
     while (n) n /= 10, ++l;
-    return l;
+    return l + 1;
 }
 
 struct gamestate* gamestate_init(struct gameoptions *opt)
@@ -199,7 +199,7 @@ struct gamestate* gamestate_init(struct gameoptions *opt)
     g->grid = malloc(opt->grid_width * sizeof(long*));
     if (!g->grid) goto grid_alloc_fail;
 
-    int i;
+    size_t i;
     for (i = 0; i < opt->grid_height; ++i)
         g->grid[i] = calloc(opt->grid_height, sizeof(long));
 
@@ -210,11 +210,10 @@ struct gamestate* gamestate_init(struct gameoptions *opt)
     g->print_width = flog10(opt->goal);
     g->opts = opt;
 
-    random_block(g);
     return g;
 
 grid_alloc_fail:
-grid_back_alloc_fail:
+//grid_back_alloc_fail:
     free(g);
 gamestate_alloc_fail:
     return NULL;
@@ -225,13 +224,13 @@ struct gameoptions* gameoptions_default(void)
     struct gameoptions *opt = malloc(sizeof(struct gameoptions));
     if (!opt) return NULL;
 
-    opt->grid_height = 4;
-    opt->grid_width = 4;
-    opt->goal = 2048;
-    opt->spawn_value = 2;
-    opt->spawn_rate = 1;
-    opt->enable_color = 0;
-    opt->animate = 1;
+    opt->grid_height = DEFAULT_GRID_HEIGHT;
+    opt->grid_width = DEFAULT_GRID_WIDTH;
+    opt->goal = DEFAULT_GOAL;
+    opt->spawn_value = DEFAULT_SPAWN_VALUE;
+    opt->spawn_rate = DEFAULT_SPAWN_RATE;
+    opt->enable_color = DEFAULT_COLOR_TOGGLE;
+    opt->animate = DEFAULT_ANIMATE_TOGGLE;
 
     return opt;
 }
@@ -242,7 +241,6 @@ int gamestate_tick(struct gamestate *g, direction d, void (*callback)(struct gam
     gravitate(g, d, callback);
     merge(g, d, callback);
     gravitate(g, d, callback);
-    random_block(g);
     return g->moved;
 }
 
@@ -310,8 +308,10 @@ struct gameoptions* parse_options(struct gameoptions *opt, int argc, char **argv
         case 's':;
             /* Stick with square for now */
             int optint = strtol(optarg, NULL, 10);
-            opt->grid_height = optint > 4 ? optint : 4;
-            opt->grid_width = optint > 4 ? optint : 4;
+            if (optint < CONSTRAINT_GRID_MAX && optint > CONSTRAINT_GRID_MIN) {
+                opt->grid_height = optint;
+                opt->grid_width = optint;
+            }
             break;
         case 'b':
             opt->spawn_rate = strtol(optarg, NULL, 10);

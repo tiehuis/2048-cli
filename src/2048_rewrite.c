@@ -8,7 +8,7 @@
 
 #define iterate(x, expr)\
     do {\
-        int i;\
+        size_t i;\
         for (i = 0; i < x; ++i) { expr; }\
     } while (0)
 
@@ -26,13 +26,15 @@ void draw_screen(struct gamestate *g)
         keypad(gamewin, TRUE);
     }
 
-    // mvwprintw will sometimes have a useless arg, this is warned, but doesn't affect the program
-    char *scr = g->score_last ? "SCORE: %d (+%d)\n" : "SCORE: %d\n";
-    mvwprintw(gamewin, 0, 0, scr, g->score, g->score_last);
+    if (g->score_last)
+        mvwprintw(gamewin, 0, 0, "SCORE: %d (+%d)\n", g->score, g->score_last);
+    else
+        mvwprintw(gamewin, 0, 0, "SCORE: %d\n", g->score);
+
     mvwprintw(gamewin, 1, 0, "HISCR: %d\n", g->score_high);
 
     iterate(g->opts->grid_width*(g->print_width + 2) + 1, waddch(gamewin, '-')); 
-    int x, y, xps = 0, yps = 3;
+    size_t x, y, xps = 0, yps = 3;
     for (y = 0; y < g->opts->grid_height; y++, xps = 0, yps++) {
         mvwprintw(gamewin, yps, xps++, "|");
         for (x = 0; x < g->opts->grid_width; x++) {
@@ -106,7 +108,7 @@ void draw_screen(struct gamestate *g)
     // alter this grid_size + 1 to match abitrary grid size
     iterate((g->print_width + 2) * g->opts->grid_width + 1, printf("-"));
     printf("\n");
-    int x, y;
+    size_t x, y;
     for (y = 0; y < g->opts->grid_height; y++) {
         printf("|");
         for (x = 0; x < g->opts->grid_width; x++) {
@@ -131,21 +133,13 @@ void ddraw(struct gamestate *g)
 
 int main(int argc, char **argv)
 {
-    struct gamestate *g = gamestate_init(
-                            parse_options(
-                              gameoptions_default(), argc, argv));
+    struct gameoptions *o = gameoptions_default();
+    struct gamestate *g = gamestate_init(parse_options(o, argc, argv));
 
     drawstate_init();
 
     while (1) {
         draw_screen(g);
-
-        int e;
-        if ((e = end_condition(g))) {
-            drawstate_clear();
-            printf(e > 0 ? "You win\n" : "You lose\n");
-            goto endloop;
-        }
 
         /* abstract getting keypress */
         int ch;
@@ -155,9 +149,19 @@ int main(int argc, char **argv)
         } while (strchr("hjkl", ch) == NULL);
 
         gamestate_tick(g, ch, g->opts->animate ? ddraw : NULL);
-    }
-endloop:
 
+        int e;
+        if ((e = end_condition(g))) {
+            drawstate_clear();
+            gamestate_clear(g);
+            printf(e > 0 ? "You win\n" : "You lose\n");
+            goto endloop;
+        }
+
+        random_block(g);
+    }
+
+endloop:
     drawstate_clear();
     gamestate_clear(g);
     return 0;
