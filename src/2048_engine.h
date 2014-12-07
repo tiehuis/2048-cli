@@ -39,11 +39,13 @@ struct gameoptions {
 struct gamestate {
     /* Game state */
     long **grid;
+    size_t gridsize;
     int moved;
     long score;
     long score_high;
     long score_last;
-    int print_width;
+    size_t print_width;
+    size_t blocks_in_play;
     /* Options */
     struct gameoptions *opts;
 };
@@ -54,7 +56,7 @@ void merge(struct gamestate*, direction, void (*callback)(struct gamestate*));
 int end_condition(struct gamestate *);
 void random_block(struct gamestate *);
 int  gamestate_tick(struct gamestate*, direction, void (*callback)(struct gamestate*));
-void gamestate_clear(struct gamestate*);;
+void gamestate_clear(struct gamestate*);
 struct gamestate*   gamestate_init(struct gameoptions *);
 struct gameoptions* gameoptions_default(void);
 #endif

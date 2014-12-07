@@ -1,10 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ncurses.h>
-#include <termios.h>
-#include <unistd.h>
 #include "2048_engine.h"
+
+/* Need to alter termios settings before actually cross-platform. */
+/* It will be something like this, maybe switch to using a time.h sleep
+ * method to get by os dependence, too? */
+#if (defined _WIN32 || defined __WIN64)
+#include <windows.h>
+#define syssleep(s) Sleep(s)
+#elif defined __unix__
+#include <unistd.h>
+#define syssleep(s) usleep((s) * 1000)
+#else 
+#error "Unsupported os: no sleep function"
+#endif
+
+#ifdef HAVE_CURSES
+#include <ncurses.h>
+#else
+#include <termios.h>
+#endif
 
 #define iterate(x, expr)\
     do {\
@@ -12,7 +28,7 @@
         for (i = 0; i < x; ++i) { expr; }\
     } while (0)
 
-#ifdef HAVE_CURSES
+#ifdef HAVE_CURSES  /* PLATFORM/OUTPUT DEPENDENT */
 void draw_screen(struct gamestate *g)
 {
     static WINDOW *gamewin;
@@ -73,6 +89,9 @@ int get_keypress(void)
 }
 
 #else /* vt100 and standard shared functions */
+
+/* Search for windows, blocking, non newline getchar */
+/* Could bypass termios that way */
 struct termios sattr;
 void drawstate_clear()
 {
@@ -83,13 +102,15 @@ void drawstate_init(void)
 {
     tcgetattr(STDIN_FILENO, &sattr);
 
-    /* alters terminal stdin to not echo and doesn't need \n before reading getchar */
     struct termios tattr;
     tcgetattr(STDIN_FILENO, &tattr);
     tattr.c_lflag &= ~(ICANON | ECHO);
     tcsetattr(STDOUT_FILENO, TCSANOW, &tattr);
 }
 
+/* Need to check input queue, and remove all queued values on each getc to get
+ * by any caught chars during any sleeps which may occur. This is easy in the
+ * ncurses version (check until ERR), but requires extra tweaking here */
 int get_keypress(void)
 {
     return fgetc(stdin);
@@ -98,6 +119,8 @@ int get_keypress(void)
 void draw_screen(struct gamestate *g)
 {
     /* Clear the screen each draw if we are able to */
+
+    /* Check for windows clear screen */
 #ifdef VT100_COMPATIBLE
     printf("\033[2J\033[H");
 #endif
@@ -123,12 +146,12 @@ void draw_screen(struct gamestate *g)
     iterate((g->print_width + 2) * g->opts->grid_width + 1, printf("-"));
     printf("\n\n");
 }
-#endif /* CURSES */
+#endif /* PLATFORM/OUTPUT DEPENDENT */
 
 void ddraw(struct gamestate *g)
 {
     draw_screen(g);
-    usleep(40000);
+    syssleep(40);
 }
 
 int main(int argc, char **argv)
