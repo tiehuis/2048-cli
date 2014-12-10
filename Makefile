@@ -1,14 +1,14 @@
 CC	   ?= gcc
 CFLAGS += -Wall -Wextra
-LIBS	= -lcurses
+DEFS	= -DVT100_COMPATIBLE
+LIBS	= 
 
 all: 2048
 
-2048: src/2048.c src/2048.h src/highscore_file.c
-	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) src/2048.c src/highscore_file.c -o 2048
-
-2048nc: src/2048_no_curses.c src/2048.h src/highscore_file.c
-	$(CC) $(CFLAGS) $(LDFLAGS) src/2048_no_curses.c src/highscore_file.c -o 2048nc
-
+2048: src/2048_engine.c src/2048_rewrite.c
+	$(CC) $(DEFS) src/2048_engine.c src/2048_rewrite.c -o 2048 $(LIBS)
+	
 clean:
-	rm -f 2048 2048nc
+	rm -f 2048
+
+.PHONY: clean

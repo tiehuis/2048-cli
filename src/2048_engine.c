@@ -235,11 +235,6 @@ struct gamestate* gamestate_init(struct gameoptions *opt)
     for (i = 0; i < g->gridsize; i += opt->grid_width)
         *iterator++ = &grid_back[i];
 
-    /* Switch back to the two allocs, setting pointers by iterating though */
-    //size_t i;
-    //for (i = 0; i < opt->grid_height; ++i)
-    //    g->grid[i] = calloc(opt->grid_height, sizeof(long));
-
     g->moved = 0;
     g->score = 0;
     g->score_high = 0;
@@ -255,6 +250,7 @@ struct gamestate* gamestate_init(struct gameoptions *opt)
     return g;
 
 grid_alloc_fail:
+    free(grid_back);
 grid_back_alloc_fail:
     free(g);
 gamestate_alloc_fail:
