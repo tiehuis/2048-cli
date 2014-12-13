@@ -1,24 +1,35 @@
 #2048-cli
 
-A cli version of the game [2048](https://github.com/gabrielecirulli/2048) for your Linux 
-terminal.
+A cli version of the game [2048](https://github.com/gabrielecirulli/2048)
+for your Linux terminal.
 
 #####2048_curses.c
 ![Screenshot](http://i.imgur.com/QU7t5mH.png)
 
 #####2048_no_curses.c
-![Screenshot](http://i.imgur.com/fwZEvdh.png) 
+![Screenshot](http://i.imgur.com/fwZEvdh.png)
 
 ## Installation
-This requires the ncurses library to link against during compilation. It is available
-in most package managers. The program creates and uses a file name `.hs2048g` in the
-working directory. Any file with this name will be modified and replaced.
+This requires the ncurses library to link against during compilation.
+It is available in most package managers.  The program creates and uses
+a file name `.hs2048g` in the working directory.  Any file with this
+name will be modified and replaced.
+
+You can easily install this on el >= 5 (CentOS, RedHat Enterprise Linux,
+Scientific Linux, Oracle) and Fedora >= 19 using the package-manager:
+
+    sudo yum install 2048-cli[-nocurses]
+
+For el you will need to have the
+[EPEL-repository](https://fedoraproject.org/wiki/EPEL/FAQ#How_can_I_install_the_packages_from_the_EPEL_software_repository.3F)
+enabled.
 
 ### Get
     git clone https://github.com/Tiehuis/2048-cli.git
     make
+
 ### Run
-    ./2048   
+    ./2048
 
 ## Options
     -s <size>      Set the grid border length
@@ -28,4 +39,5 @@ working directory. Any file with this name will be modified and replaced.
     -C             Disables color support (ncurses version only)
 
 ## License
-This code is licensed under the [MIT License](https://github.com/Tiehuis/2048-cli/blob/master/LICENSE).
+This code is licensed under the
+[MIT License](https://github.com/Tiehuis/2048-cli/blob/master/LICENSE).
