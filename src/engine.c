@@ -1,11 +1,14 @@
 #include <stdlib.h>
 #include <time.h>
-#include "2048_engine.h"
+#include "engine.h"
 
 /* Utilize block counter to improve some of the functions so they can run
  * quicker */
 
-void gravitate(struct gamestate *g, direction d, void (*callback)(struct gamestate *g))
+/* This function will move all blocks in the given game the given direction.
+ * The callback function is called after each single move. It can be used to
+ * animate the movement of the board. */
+static void gravitate(struct gfx_state *s, struct gamestate *g, int d, void (*callback)(struct gfx_state *s, struct gamestate *g))
 {
 
 #define swap_if_space(xoff, yoff)\
@@ -18,7 +21,7 @@ void gravitate(struct gamestate *g, direction d, void (*callback)(struct gamesta
         }\
     } while (0)
 
-    size_t x, y;
+    int x, y;
     int done = 0;
 
     if (d == dir_left) {
@@ -30,7 +33,7 @@ void gravitate(struct gamestate *g, direction d, void (*callback)(struct gamesta
                 }
             }
             if (callback)
-                callback(g);
+                callback(s, g);
         }
     }
     else if (d == dir_right) {
@@ -42,7 +45,7 @@ void gravitate(struct gamestate *g, direction d, void (*callback)(struct gamesta
                 }
             }
             if (callback)
-                callback(g);
+                callback(s, g);
         }
     }
     else if (d == dir_down) {
@@ -54,7 +57,7 @@ void gravitate(struct gamestate *g, direction d, void (*callback)(struct gamesta
                 }
             }
             if (callback)
-                callback(g);
+                callback(s, g);
         }
     }
     else if (d == dir_up) {
@@ -66,7 +69,7 @@ void gravitate(struct gamestate *g, direction d, void (*callback)(struct gamesta
                 }
             }
             if (callback)
-                callback(g);
+                callback(s, g);
         }
     }
     else {
@@ -77,7 +80,16 @@ void gravitate(struct gamestate *g, direction d, void (*callback)(struct gamesta
 #undef swap_if_space
 }
 
-void merge(struct gamestate *g, direction d, void (*callback)(struct gamestate *g))
+/* The merge function will combine adjacent blocks with the same value for
+ * the given direction. Note, left and right merges will merge in a different
+ * order, so they are not identical in all cases.
+ *
+ * Consider 2 2 2 0
+ *
+ * Right merging: 4 0 2 0
+ * Left merging:  2 0 4 0
+ */
+static void merge(struct gfx_state *s, struct gamestate *g, int d, void (*callback)(struct gfx_state *s, struct gamestate *g))
 {
 
 #define merge_if_equal(xoff, yoff)\
@@ -92,9 +104,9 @@ void merge(struct gamestate *g, direction d, void (*callback)(struct gamestate *
         }\
     } while (0)
 
-    size_t x, y;
+    int x, y;
     g->score_last = 0;
-        
+
     if (d == dir_left) {
         for (x = 0; x < g->opts->grid_width - 1; ++x) {
             for (y = 0; y < g->opts->grid_height; ++y) {
@@ -129,33 +141,26 @@ void merge(struct gamestate *g, direction d, void (*callback)(struct gamestate *
     }
 
     if (callback)
-        callback(g);
+        callback(s, g);
 
 #undef merge_if_equal
 }
 
-/* Return -1 on lose condition, 1 on win condition, 0 on
- * haven't ended */
-int end_condition(struct gamestate *g)
+/* Scan the current board and determine if an end outcome has been reached.
+ * -1 indicates a lose condition, 1 indicates a win condition, 0 indicates
+ *  end has not yet been reached. */
+int gamestate_end_condition(struct gamestate *g)
 {
     int ret = -1;
-    size_t blocks_counted = 0;
+    //size_t blocks_counted = 0;
 
-    size_t x, y;
-    for (x = 0; x < g->opts->grid_width; ++x) {
-        for (y = 0; y < g->opts->grid_height; ++y) {
-            if (g->grid[x][y]) {
-                blocks_counted++;
-                if (g->grid[x][y] >= g->opts->goal)
-                    return 1;
-                else if (blocks_counted >= g->blocks_in_play)
-                    return ret;
-            }
+    for (int x = 0; x < g->opts->grid_width; ++x) {
+        for (int y = 0; y < g->opts->grid_height; ++y) {
             if (g->grid[x][y] >= g->opts->goal)
-                return 1; 
+                return 1;
             if (!g->grid[x][y] || ((x + 1 < g->opts->grid_width) &&
                         (g->grid[x][y] == g->grid[x+1][y]))
-                    || ((y + 1 < g->opts->grid_height) && 
+                    || ((y + 1 < g->opts->grid_height) &&
                         (g->grid[x][y] == g->grid[x][y+1])))
                 ret = 0;
         }
@@ -164,10 +169,8 @@ int end_condition(struct gamestate *g)
     return ret;
 }
 
-/* Find a better method for getting a random square. It would be useful to keep
- * track of how many blocks are in play, which we can query here, end_condition
- * to improve them. */
-void random_block(struct gamestate *g)
+/* Place a random block into the current grid */
+void gamestate_new_block(struct gamestate *g)
 {
     /* pick random square, if it is full, then move forward until we find
      * an empty square. This is biased */
@@ -179,14 +182,14 @@ void random_block(struct gamestate *g)
     }
 
     /* Fix up this random number generator */
-    /* Method: 
+    /* Method:
      *  -   Find a non-biased index between 0 and blocks_play, n
      *  -   Find the nth 0 element in the array
      *  -   insert a random value there
      */
 
     /* Error here */
-#ifdef NULLO
+#ifdef SKIP
     size_t block_position = (size_t)rand() % (
             g->opts->grid_width * g->opts->grid_height - g->blocks_in_play);
 
@@ -208,13 +211,17 @@ void random_block(struct gamestate *g)
 
 /* This returns the number of digits in the base10 rep of n. The ceiling is
  * taken so this will be one greater than required */
-static int clog10(unsigned int n)
+static int digits_ceiling(unsigned int n)
 {
     int l = 0;
     while (n) n /= 10, ++l;
     return l + 1;
 }
 
+/* Return NULL if we couldn't allocate space for the gamestate. The opt
+ * argument can be passed directly via gameoptions_default i.e
+ * *o = gamestate_init(gameoptions_default) is valid, as the delete function
+ * will find the pointer to the gameoptions and delete the data accordingly. */
 struct gamestate* gamestate_init(struct gameoptions *opt)
 {
     if (!opt) return NULL;
@@ -223,146 +230,58 @@ struct gamestate* gamestate_init(struct gameoptions *opt)
     if (!g) goto gamestate_alloc_fail;
     g->gridsize = opt->grid_width * opt->grid_height;
 
-    long *grid_back = calloc(g->gridsize, sizeof(long));
-    if (!grid_back) goto grid_back_alloc_fail;
-   
+    g->grid_data_ptr = calloc(g->gridsize, sizeof(long));
+    if (!g->grid_data_ptr) goto grid_data_alloc_fail;
+
     g->grid = malloc(opt->grid_height * sizeof(long*));
     if (!g->grid) goto grid_alloc_fail;
 
     /* Switch to two allocation version */
-    size_t i;
     long **iterator = g->grid;
-    for (i = 0; i < g->gridsize; i += opt->grid_width)
-        *iterator++ = &grid_back[i];
+    for (int i = 0; i < g->gridsize; i += opt->grid_width)
+        *iterator++ = &g->grid_data_ptr[i];
 
     g->moved = 0;
     g->score = 0;
     g->score_high = 0;
     g->score_last = 0;
-    g->print_width = clog10(opt->goal);
+    g->print_width = digits_ceiling(opt->goal);
     g->blocks_in_play = 0;
     g->opts = opt;
 
     /* Initial 3 random blocks */
-    random_block(g);
-    random_block(g);
-    random_block(g);
+    gamestate_new_block(g);
+    gamestate_new_block(g);
+    gamestate_new_block(g);
     return g;
 
 grid_alloc_fail:
-    free(grid_back);
-grid_back_alloc_fail:
+    free(g->grid_data_ptr);
+grid_data_alloc_fail:
     free(g);
 gamestate_alloc_fail:
     return NULL;
 }
 
-struct gameoptions* gameoptions_default(void)
-{
-    struct gameoptions *opt = malloc(sizeof(struct gameoptions));
-    if (!opt) return NULL;
-
-    opt->grid_height = DEFAULT_GRID_HEIGHT;
-    opt->grid_width = DEFAULT_GRID_WIDTH;
-    opt->goal = DEFAULT_GOAL;
-    opt->spawn_value = DEFAULT_SPAWN_VALUE;
-    opt->spawn_rate = DEFAULT_SPAWN_RATE;
-    opt->enable_color = DEFAULT_COLOR_TOGGLE;
-    opt->animate = DEFAULT_ANIMATE_TOGGLE;
-
-    return opt;
-}
-
-int gamestate_tick(struct gamestate *g, direction d, void (*callback)(struct gamestate*))
+/* A tick is a gravitate, merge then gravitate all in the same direction.
+ * the moved variable is set to 0 initially and if the gravitate of merge
+ * functions modify it, we can determine which action to take. */
+int gamestate_tick(struct gfx_state *s, struct gamestate *g, int d, void (*callback)(struct gfx_state*, struct gamestate*))
 {
     /* Reset move. Altered by gravitate and merge if we do move */
     g->moved = 0;
-    gravitate(g, d, callback);
-    merge(g, d, callback);
-    gravitate(g, d, callback);
+    printf("%d\n", d);
+    gravitate(s, g, d, callback);
+    merge(s, g, d, callback);
+    gravitate(s, g, d, callback);
     return g->moved;
 }
 
+/* Free all data associated with the gamestate */
 void gamestate_clear(struct gamestate *g)
 {
-    free(g->opts);
-    free(g->grid[0]);   /* Free grid data */
+    gameoptions_destroy(g->opts);
+    free(g->grid_data_ptr);   /* Free grid data */
     free(g->grid);      /* Free pointers to data slots */
     free(g);
-}
-
-/* The following may be moved into own file */
-void reset_highscore(void)
-{
-    printf("Are you sure you want to reset your highscores? (Y)es/(N)o: ");
-
-    int response;
-    if ((response = getchar()) == 'y' || response == 'Y') {
-        printf("Resetting highscore...\n");
-    }
-}
-
-void print_usage(void)
-{
-    printf(
-    "usage: 2048 [-cCaArh] [-g <goal>] [-b <rate>] [-s <size>]\n"
-    "\n"
-    "controls\n"
-    "   hjkl        movement keys\n"
-    "   q           quit current game\n"
-    "\n"
-    "options\n"
-    "   -s <size>   set the grid side lengths\n"
-    "   -b <rate>   set the block spawn rate\n"
-    "   -g <goal>   set a new goal (default 2048)\n"
-    "   -a          enable animations (default)\n"
-    "   -A          disable animations\n"
-    "   -c          enable color support\n"
-    "   -C          disable color support (default)\n"
-    );
-}
-
-#include <getopt.h>
-
-struct gameoptions* parse_options(struct gameoptions *opt, int argc, char **argv)
-{
-    int c;
-    while ((c = getopt(argc, argv, "aArcChg:s:b:")) != -1) {
-        switch (c) {
-        case 'a':
-            opt->animate = 1;
-            break;
-        case 'A':
-            opt->animate = 0;
-            break;
-        case 'c':
-            opt->enable_color = 1;
-            break;
-        case 'C':
-            opt->enable_color = 0;
-            break;
-        case 'g':
-            opt->goal = strtol(optarg, NULL, 10);
-            break;
-        case 's':;
-            /* Stick with square for now */
-            int optint = strtol(optarg, NULL, 10);
-            if (optint < CONSTRAINT_GRID_MAX && optint > CONSTRAINT_GRID_MIN) {
-                opt->grid_height = optint;
-                opt->grid_width = optint;
-            }
-            break;
-        case 'b':
-            opt->spawn_rate = strtol(optarg, NULL, 10);
-            break;
-        case 'r':
-            reset_highscore();
-            exit(0);
-        case 'h':
-            print_usage();
-            exit(0);
-        }
-    }
-
-    return opt;
 }

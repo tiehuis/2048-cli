@@ -1,14 +1,27 @@
-CC	   ?= gcc
-CFLAGS += -Wall -Wextra
-DEFS	= -DVT100_COMPATIBLE
-LIBS	= 
+CC	    := clang
+CFLAGS  += -O2 -Wall -Wextra
+LFLAGS  +=
+DEFINES := -DVT100
 
-all: 2048
+PROGRAM := 2048
+C_FILES := $(wildcard src/*.c)
+O_FILES := $(addprefix obj/,$(notdir $(C_FILES:.c=.o)))
 
-2048: src/2048_engine.c src/2048_rewrite.c
-	$(CC) $(DEFS) src/2048_engine.c src/2048_rewrite.c -o 2048 $(LIBS)
-	
+all: curses
+
+curses: $(O_FILES)
+	$(CC) $(filter-out obj/gfx%.o, $(O_FILES)) obj/gfx_curses.o -o $(PROGRAM) -lcurses
+
+vt100: $(O_FILES)
+	$(CC) $(filter-out obj/gfx%.o, $(O_FILES)) obj/gfx_terminal.o -o $(PROGRAM)
+
+obj/%.o: src/%.c
+	$(CC) $(DEFINES) $(CFLAGS) -c -o $@ $<
+
+remake: clean all
+
 clean:
+	rm -f obj/*
 	rm -f 2048
 
-.PHONY: clean
+.PHONY: clean remake
