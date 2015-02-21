@@ -1,7 +1,7 @@
 CC	    := clang
 CFLAGS  += -g -Wall -Wextra
 LFLAGS  +=
-DEFINES := -DVT100 -D_REENTRANT -I/usr/include/SDL2
+DEFINES := -DVT100 $(shell pkg-config --cflags sdl2)
 
 PROGRAM := 2048
 C_FILES := $(wildcard src/*.c)

@@ -11,12 +11,7 @@ create a .c file which implements all the functions in gfx.h and add a Makefile 
 
 ### Get
     git clone https://github.com/Tiehuis/2048-cli.git
-
-    make vt100
-or
-    make curses
-or
-    make sdl
+    make
 
 ### Run
     ./2048
