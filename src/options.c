@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "highscore.h"
 #include "options.h"
 
 void print_usage(void)
@@ -77,6 +78,7 @@ struct gameoptions* parse_options(struct gameoptions *opt, int argc, char **argv
             opt->spawn_rate = strtol(optarg, NULL, 10);
             break;
         case 'r':
+            highscore_reset();
             exit(0);
         case 'h':
             print_usage();

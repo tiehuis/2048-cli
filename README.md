@@ -23,7 +23,7 @@ create a .c file which implements all the functions in gfx.h and add a Makefile 
     -c             Enables color support (ncurses version only)
     -C             Disables color support (ncurses version only)
 
-Fonts used in SDL version can be found [here](openfontlibrary.org).
+Fonts used in SDL version can be found [here](www.openfontlibrary.org).
 
 ## License
 This code is licensed under the [MIT License](https://github.com/Tiehuis/2048-cli/blob/master/LICENSE).

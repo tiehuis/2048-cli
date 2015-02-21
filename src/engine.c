@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "engine.h"
+#include "highscore.h"
 
 /* Utilize block counter to improve some of the functions so they can run
  * quicker */
@@ -249,6 +250,8 @@ struct gamestate* gamestate_init(struct gameoptions *opt)
     g->blocks_in_play = 0;
     g->opts = opt;
 
+    highscore_load(g);
+
     /* Initial 3 random blocks */
     gamestate_new_block(g);
     gamestate_new_block(g);
@@ -279,6 +282,7 @@ int gamestate_tick(struct gfx_state *s, struct gamestate *g, int d, void (*callb
 /* Free all data associated with the gamestate */
 void gamestate_clear(struct gamestate *g)
 {
+    highscore_save(g);
     gameoptions_destroy(g->opts);
     free(g->grid_data_ptr);   /* Free grid data */
     free(g->grid);      /* Free pointers to data slots */
