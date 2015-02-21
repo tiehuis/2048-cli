@@ -270,7 +270,6 @@ int gamestate_tick(struct gfx_state *s, struct gamestate *g, int d, void (*callb
 {
     /* Reset move. Altered by gravitate and merge if we do move */
     g->moved = 0;
-    printf("%d\n", d);
     gravitate(s, g, d, callback);
     merge(s, g, d, callback);
     gravitate(s, g, d, callback);

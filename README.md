@@ -1,24 +1,25 @@
 #2048-cli
 
-A cli version of the game [2048](https://github.com/gabrielecirulli/2048) for your Linux 
+A cli version/engine of the game [2048](https://github.com/gabrielecirulli/2048) for your Linux
 terminal.
 
-#####2048_curses.c
 ![Screenshot](http://i.imgur.com/QU7t5mH.png)
 
-#####2048_no_curses.c
-![Screenshot](http://i.imgur.com/fwZEvdh.png) 
-
-## Installation
-This requires the ncurses library to link against during compilation. It is available
-in most package managers. The program creates and uses a file name `.hs2048g` in the
-working directory. Any file with this name will be modified and replaced.
+There currently are 3 versions that can be run. These include a straight-forward terminal
+based, and two using the ncurses and SDL libraries. To add a new graphical version, simply
+create a .c file which implements all the functions in gfx.h and add a Makefile entry.
 
 ### Get
     git clone https://github.com/Tiehuis/2048-cli.git
-    make
+
+    make vt100
+or
+    make curses
+or
+    make sdl
+
 ### Run
-    ./2048   
+    ./2048
 
 ## Options
     -s <size>      Set the grid border length
@@ -26,6 +27,8 @@ working directory. Any file with this name will be modified and replaced.
     -r             Resets hiscore. Will prompt user
     -c             Enables color support (ncurses version only)
     -C             Disables color support (ncurses version only)
+
+Fonts used in SDL version can be found [here](openfontlibrary.org).
 
 ## License
 This code is licensed under the [MIT License](https://github.com/Tiehuis/2048-cli/blob/master/LICENSE).

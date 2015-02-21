@@ -1,7 +1,7 @@
 CC	    := clang
-CFLAGS  += -O2 -Wall -Wextra
+CFLAGS  += -g -Wall -Wextra
 LFLAGS  +=
-DEFINES := -DVT100
+DEFINES := -DVT100 -D_REENTRANT -I/usr/include/SDL2
 
 PROGRAM := 2048
 C_FILES := $(wildcard src/*.c)
@@ -14,6 +14,9 @@ curses: $(O_FILES)
 
 vt100: $(O_FILES)
 	$(CC) $(filter-out obj/gfx%.o, $(O_FILES)) obj/gfx_terminal.o -o $(PROGRAM)
+
+sdl: $(O_FILES)
+	$(CC) $(filter-out obj/gfx%.o, $(O_FILES)) obj/gfx_sdl.o -o $(PROGRAM) -lSDL2 -lSDL2_ttf
 
 obj/%.o: src/%.c
 	$(CC) $(DEFINES) $(CFLAGS) -c -o $@ $<
