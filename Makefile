@@ -1,25 +1,29 @@
-ASCIIDOC ?= a2x
-CC       ?= gcc
-CFLAGS   := -Wall -Wextra $(CFLAGS)
-LIBS      = -lcurses
+CC	    ?= clang
+CFLAGS  += -g -Wall -Wextra
+LFLAGS  +=
+DEFINES := -DVT100 $(shell pkg-config --cflags sdl2)
 
-.PHONY: clean man man-nc
+PROGRAM := 2048
+C_FILES := $(wildcard src/*.c)
+O_FILES := $(addprefix obj/,$(notdir $(C_FILES:.c=.o)))
 
-2048: src/2048.c
-	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) src/2048.c -o 2048
+all: curses
 
-2048nc: src/2048.c
-	$(CC) -DNO_CURSES=1 $(CFLAGS) $(LDFLAGS) src/2048.c -o 2048nc
+curses: $(O_FILES)
+	$(CC) $(filter-out obj/gfx%.o, $(O_FILES)) obj/gfx_curses.o -o $(PROGRAM) -lcurses
 
-all: 2048
+vt100: $(O_FILES)
+	$(CC) $(filter-out obj/gfx%.o, $(O_FILES)) obj/gfx_terminal.o -o $(PROGRAM)
+
+sdl: $(O_FILES)
+	$(CC) $(filter-out obj/gfx%.o, $(O_FILES)) obj/gfx_sdl.o -o $(PROGRAM) -lSDL2 -lSDL2_ttf
+
+obj/%.o: src/%.c
+	$(CC) $(DEFINES) $(CFLAGS) -c -o $@ $<
+
+remake: clean all
 
 clean:
-	rm -f 2048 2048nc
+	rm -f $(O_FILES) $(PROGRAM)
 
-man:
-	rm -f man/2048.1
-	$(ASCIIDOC) -d manpage -f manpage man/2048.1.txt
-
-man-nc:
-	rm -f man/2048nc.1
-	$(ASCIIDOC) -d manpage -f manpage man/2048nc.1.txt
+.PHONY: clean remake
