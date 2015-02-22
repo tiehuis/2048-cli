@@ -154,9 +154,10 @@ int gamestate_end_condition(struct gamestate *g)
 {
     int ret = -1;
     //size_t blocks_counted = 0;
+    int x, y;
 
-    for (int x = 0; x < g->opts->grid_width; ++x) {
-        for (int y = 0; y < g->opts->grid_height; ++y) {
+    for (x = 0; x < g->opts->grid_width; ++x) {
+        for (y = 0; y < g->opts->grid_height; ++y) {
             if (g->grid[x][y] >= g->opts->goal)
                 return 1;
             if (!g->grid[x][y] || ((x + 1 < g->opts->grid_width) &&
@@ -238,8 +239,9 @@ struct gamestate* gamestate_init(struct gameoptions *opt)
     if (!g->grid) goto grid_alloc_fail;
 
     /* Switch to two allocation version */
+    int i;
     long **iterator = g->grid;
-    for (int i = 0; i < g->gridsize; i += opt->grid_width)
+    for (i = 0; i < g->gridsize; i += opt->grid_width)
         *iterator++ = &g->grid_data_ptr[i];
 
     g->moved = 0;
