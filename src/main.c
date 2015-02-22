@@ -47,18 +47,18 @@ get_new_key:;
 
         /* Game will only end if 0 moves available */
         if (game_running) {
-            /* Maybe change this behaviour so if we don't move, we still generate a block */
-            if (gamestate_tick(s, g, direction, g->opts->animate ? draw_then_sleep : NULL))
+            gamestate_tick(s, g, direction, g->opts->animate ? draw_then_sleep : NULL);
+
+            int spawned;
+            for (spawned = 0; spawned < g->opts->spawn_rate; spawned++)
                 gamestate_new_block(g);
 
             if (gamestate_end_condition(g)) {
                 game_running = false;
-                goto game_end;
             }
         }
     }
 
-game_end:
     gfx_destroy(s);
     gamestate_clear(g);
     return 0;

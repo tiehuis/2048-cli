@@ -183,6 +183,9 @@ void gamestate_new_block(struct gamestate *g)
         srand(time(NULL));
     }
 
+    /* Exit early if there are no spaces to place a block */
+    if (g->blocks_in_play == g->gridsize) return;
+
     /* Fix up this random number generator */
     /* Method:
      *  -   Find a non-biased index between 0 and blocks_play, n
@@ -251,6 +254,11 @@ struct gamestate* gamestate_init(struct gameoptions *opt)
     g->print_width = digits_ceiling(opt->goal);
     g->blocks_in_play = 0;
     g->opts = opt;
+
+    /* Clamp spawn rate to maximum to avoid possible excessive calculation
+     * int generation of blocks */
+    if (g->opts->spawn_rate > g->gridsize)
+        g->opts->spawn_rate = g->gridsize;
 
     highscore_load(g);
 
