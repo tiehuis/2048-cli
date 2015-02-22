@@ -60,6 +60,8 @@ get_new_key:;
     }
 
     gfx_destroy(s);
+    printf("Highscore: %ld\n", g->score_high);
+    printf("    Score: %ld\n", g->score);
     gamestate_clear(g);
     return 0;
 }

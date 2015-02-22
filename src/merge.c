@@ -3,7 +3,6 @@
 
 #define MERGE_GOAL 11
 
-:a
 const long merge_values[] = {
     0, 2, 4, 8, 16, 32, 64, 128, 256, 512,
     1024, 2048
