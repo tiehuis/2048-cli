@@ -5,22 +5,7 @@
 
 void print_usage(void)
 {
-    printf(
-    "usage: 2048 [-cCaArh] [-g <goal>] [-b <rate>] [-s <size>]\n"
-    "\n"
-    "controls\n"
-    "   hjkl        movement keys\n"
-    "   q           quit current game\n"
-    "\n"
-    "options\n"
-    "   -s <size>   set the grid side lengths\n"
-    "   -b <rate>   set the block spawn rate\n"
-    "   -g <goal>   set a new goal (default 2048)\n"
-    "   -a          enable animations (default)\n"
-    "   -A          disable animations\n"
-    "   -c          enable color support\n"
-    "   -C          disable color support (default)\n"
-    );
+    printf("usage: 2048 [-cCaArh] [-s SIZE] [-b RATE] [-g GOAL]\n");
 }
 
 

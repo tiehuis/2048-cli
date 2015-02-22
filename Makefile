@@ -24,7 +24,6 @@ obj/%.o: src/%.c
 remake: clean all
 
 clean:
-	rm -f obj/*
-	rm -f 2048
+	rm -f $(O_FILES) $(PROGRAM)
 
 .PHONY: clean remake
