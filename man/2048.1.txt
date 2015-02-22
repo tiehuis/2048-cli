@@ -36,7 +36,7 @@ OPTIONS
 
 CONTROLS
 --------
-*hjkl or *wasd* or *arrow keys*::
+*hjkl* or *wasd* or *arrow keys*::
     Movement
 *q*::
     Quit the game.
