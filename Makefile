@@ -1,4 +1,4 @@
-CC	    := clang
+CC      ?= clang
 CFLAGS  += -g -Wall -Wextra
 LFLAGS  +=
 DEFINES := -DVT100 $(shell pkg-config --cflags sdl2)
