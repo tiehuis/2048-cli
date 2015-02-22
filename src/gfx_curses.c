@@ -8,6 +8,8 @@
 #define GFX_EXTRA_RIGHT case KEY_RIGHT:
 #define GFX_EXTRA_LEFT  case KEY_LEFT:
 
+#define NUMBER_OF_COLORS 7
+
 #define iterate(n, expression)\
     do {\
         int i;\
@@ -32,7 +34,30 @@ struct gfx_state* gfx_init(struct gamestate *g)
     s->window_width  = g->opts->grid_width * (g->print_width + 2) + 1;
     s->window = newwin(s->window_height, s->window_width, 1, 1);
     keypad(s->window, TRUE);
+
+    if (g->opts->enable_color && has_colors()) {
+        start_color();
+
+        int x = 0;
+        init_pair(x++, 1, 0);
+        init_pair(x++, 2, 0);
+        init_pair(x++, 3, 0);
+        init_pair(x++, 4, 0);
+        init_pair(x++, 5, 0);
+        init_pair(x++, 6, 0);
+        init_pair(x++, 7, 0);
+        char dummy[x == NUMBER_OF_COLORS ? 1 : -1];
+    }
+
     return s;
+}
+
+static int int_log2(int n)
+{
+    int k = 0;
+    while (n)
+        ++k, n /= 2;
+    return k;
 }
 
 void gfx_draw(struct gfx_state *s, struct gamestate *g)
@@ -54,7 +79,9 @@ void gfx_draw(struct gfx_state *s, struct gamestate *g)
 
         for (x = 0; x < g->opts->grid_width; ++x) {
             if (g->grid[x][y]) {
+                wattron(s->window, COLOR_PAIR(int_log2(g->grid[x][y]) % NUMBER_OF_COLORS));
                 mvwprintw(s->window, ypos, xpos, "%*d", g->print_width, g->grid[x][y]);
+                wattroff(s->window, COLOR_PAIR(int_log2(g->grid[x][y]) % NUMBER_OF_COLORS));
                 mvwprintw(s->window, ypos, xpos + g->print_width, " |");
             }
             else {

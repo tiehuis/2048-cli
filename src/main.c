@@ -47,6 +47,7 @@ get_new_key:;
 
         /* Game will only end if 0 moves available */
         if (game_running) {
+            /* Maybe change this behaviour so if we don't move, we still generate a block */
             if (gamestate_tick(s, g, direction, g->opts->animate ? draw_then_sleep : NULL))
                 gamestate_new_block(g);
 
