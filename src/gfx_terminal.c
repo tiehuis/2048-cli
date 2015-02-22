@@ -45,7 +45,7 @@ void gfx_draw(struct gfx_state *s, struct gamestate *g)
 
         for (x = 0; x < g->opts->grid_width; ++x) {
             if (g->grid[x][y])
-                printf("%*zd |", g->print_width, g->grid[x][y]);
+                printf("%*zd |", g->print_width, merge_value(g->grid[x][y]));
             else
                 printf("%*s |", g->print_width, "");
         }

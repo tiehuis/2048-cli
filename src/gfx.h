@@ -3,13 +3,6 @@
 
 #include "engine.h"
 
-/* These can be defined by an implemenation if special codes are used
- * to represent some keys. e.g. KEY_LEFT in ncurses */
-#define GFX_RIGHT_EXTRA
-#define GFX_LEFT_EXTRA
-#define GFX_DOWN_EXTRA
-#define GFX_UP_EXTRA
-
 struct gfx_state;
 
 /* Initialization of a graphics context */

@@ -64,6 +64,8 @@ void highscore_load(struct gamestate *g)
 
 void highscore_save(struct gamestate *g)
 {
+    /* Someone could make their own merge rules for highscores and this could be meaningless,
+     * howeverhighscores are in plaintext, so that isn't that much of a concern */
     if (g->score < g->score_high || g->opts->grid_width != 4 || g->opts->grid_height != 4)
         return;
 

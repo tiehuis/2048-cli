@@ -102,7 +102,7 @@ void gfx_draw(struct gfx_state *s, struct gamestate *g)
 
         for (x = 0; x < g->opts->grid_width; ++x) {
             if (g->grid[x][y]) {
-                snprintf(string_buffer, buffer_length, "%*ld |", g->print_width, g->grid[x][y]);
+                snprintf(string_buffer, buffer_length, "%*ld |", g->print_width, merge_value(g->grid[x][y]));
                 strncpy(line_buffer + line_index, string_buffer, buffer_length - line_index);
                 line_index += strlen(string_buffer);
             }

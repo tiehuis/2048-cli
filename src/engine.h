@@ -13,8 +13,8 @@
 
 struct gamestate {
     /* Game state */
-    long *grid_data_ptr;
-    long **grid;
+    int *grid_data_ptr;
+    int **grid;
     int gridsize;
     int moved;
     long score;

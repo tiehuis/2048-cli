@@ -5,7 +5,7 @@
 
 void print_usage(void)
 {
-    printf("usage: 2048 [-cCaArh] [-s SIZE] [-b RATE] [-g GOAL]\n");
+    printf("usage: 2048 [-cCaArh] [-s SIZE] [-b RATE]\n");
 }
 
 
@@ -17,7 +17,6 @@ struct gameoptions* gameoptions_default(void)
 
     opt->grid_height = DEFAULT_GRID_HEIGHT;
     opt->grid_width = DEFAULT_GRID_WIDTH;
-    opt->goal = DEFAULT_GOAL;
     opt->spawn_value = DEFAULT_SPAWN_VALUE;
     opt->spawn_rate = DEFAULT_SPAWN_RATE;
     opt->enable_color = DEFAULT_COLOR_TOGGLE;
@@ -34,7 +33,7 @@ void gameoptions_destroy(struct gameoptions *opt)
 struct gameoptions* parse_options(struct gameoptions *opt, int argc, char **argv)
 {
     int c;
-    while ((c = getopt(argc, argv, "aArcChg:s:b:")) != -1) {
+    while ((c = getopt(argc, argv, "aArcCh:s:b:")) != -1) {
         switch (c) {
         case 'a':
             opt->animate = 1;
@@ -47,9 +46,6 @@ struct gameoptions* parse_options(struct gameoptions *opt, int argc, char **argv
             break;
         case 'C':
             opt->enable_color = 0;
-            break;
-        case 'g':
-            opt->goal = strtol(optarg, NULL, 10);
             break;
         case 's':;
             /* Stick with square for now */

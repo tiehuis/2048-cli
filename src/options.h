@@ -7,7 +7,6 @@
 #define CONSTRAINT_GRID_MAX 20
 #define DEFAULT_GRID_HEIGHT 4
 #define DEFAULT_GRID_WIDTH 4
-#define DEFAULT_GOAL 2048
 #define DEFAULT_SPAWN_VALUE 2
 #define DEFAULT_SPAWN_RATE 1
 #define DEFAULT_COLOR_TOGGLE 0
@@ -16,7 +15,6 @@
 struct gameoptions {
     int grid_height;
     int grid_width;
-    long goal;
     long spawn_value;
     int spawn_rate;
     int enable_color;

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <time.h>
+#include "merge.h"
 #include "engine.h"
 #include "highscore.h"
 
@@ -95,12 +96,12 @@ static void merge(struct gfx_state *s, struct gamestate *g, int d, void (*callba
 
 #define merge_if_equal(xoff, yoff)\
     do {\
-        if (g->grid[x][y] && (g->grid[x][y] == g->grid[x+xoff][y+yoff])) {\
-            g->grid[x][y] += g->grid[x+xoff][y+yoff];\
+        if (g->grid[x][y] && (merge_possible(g->grid[x][y], g->grid[x+xoff][y+yoff]))) {\
+            g->grid[x][y] = merge_result(g->grid[x][y], g->grid[x+xoff][y+yoff]);\
             g->grid[x+xoff][y+yoff] = 0;\
             g->blocks_in_play -= 1;\
-            g->score_last += g->grid[x][y];\
-            g->score += g->grid[x][y];\
+            g->score_last += merge_value(g->grid[x][y]);\
+            g->score += merge_value(g->grid[x][y]);\
             g->moved = 1;\
         }\
     } while (0)
@@ -158,12 +159,12 @@ int gamestate_end_condition(struct gamestate *g)
 
     for (x = 0; x < g->opts->grid_width; ++x) {
         for (y = 0; y < g->opts->grid_height; ++y) {
-            if (g->grid[x][y] >= g->opts->goal)
+            if (g->grid[x][y] == merge_goal())
                 return 1;
             if (!g->grid[x][y] || ((x + 1 < g->opts->grid_width) &&
-                        (g->grid[x][y] == g->grid[x+1][y]))
+                        merge_possible(g->grid[x][y], g->grid[x+1][y]))
                     || ((y + 1 < g->opts->grid_height) &&
-                        (g->grid[x][y] == g->grid[x][y+1])))
+                        merge_possible(g->grid[x][y], g->grid[x][y+1])))
                 ret = 0;
         }
     }
@@ -174,43 +175,30 @@ int gamestate_end_condition(struct gamestate *g)
 /* Place a random block into the current grid */
 void gamestate_new_block(struct gamestate *g)
 {
-    /* pick random square, if it is full, then move forward until we find
-     * an empty square. This is biased */
-
-    static int seeded = 0;
-    if (!seeded) {
-        seeded = 1;
-        srand(time(NULL));
-    }
-
     /* Exit early if there are no spaces to place a block */
     if (g->blocks_in_play == g->gridsize) return;
 
-    /* Fix up this random number generator */
-    /* Method:
-     *  -   Find a non-biased index between 0 and blocks_play, n
-     *  -   Find the nth 0 element in the array
-     *  -   insert a random value there
-     */
+#ifdef FIX
+    int block_number = rand() % (g->gridsize - g->blocks_in_play);
 
-    /* Error here */
-#ifdef SKIP
-    size_t block_position = (size_t)rand() % (
-            g->opts->grid_width * g->opts->grid_height - g->blocks_in_play);
+    int x, y, p = 0;
+    for (y = 0; y < g->opts->grid_height; ++y) {
+        for (x = 0; x < g->opts->grid_width; ++x) {
+            if (p == block_number) {
+                g->grid[x][y] = rand() & 1 ? 1 : 2;
+                g->blocks_in_play += 1;
+                return;
+            }
 
-    size_t i, ps;
-    for (i = 0, ps = 0; ps < block_position; ++i) {
-        if (!g->grid[i / g->opts->grid_width][i % g->opts->grid_height]) ps++;
+            if (!g->grid[x][y]) p++;
+        }
     }
-
-    g->grid[i / g->opts->grid_width][i % g->opts->grid_height]
-         = (rand() & 3) ? g->opts->spawn_value : g->opts->spawn_value * 2;
 #endif
 
     /* Use rudimentary for now */
     int x, y;
     while (g->grid[x = rand() % g->opts->grid_width][y = rand() % g->opts->grid_height]);
-    g->grid[x][y] = (rand() & 3) ? g->opts->spawn_value : g->opts->spawn_value * 2;
+    g->grid[x][y] = rand() & 1 ? 1 : 2;
     g->blocks_in_play += 1;
 }
 
@@ -231,19 +219,21 @@ struct gamestate* gamestate_init(struct gameoptions *opt)
 {
     if (!opt) return NULL;
 
+    srand(time(NULL));
+
     struct gamestate *g = malloc(sizeof(struct gamestate));
     if (!g) goto gamestate_alloc_fail;
     g->gridsize = opt->grid_width * opt->grid_height;
 
-    g->grid_data_ptr = calloc(g->gridsize, sizeof(long));
+    g->grid_data_ptr = calloc(g->gridsize, sizeof(int));
     if (!g->grid_data_ptr) goto grid_data_alloc_fail;
 
-    g->grid = malloc(opt->grid_height * sizeof(long*));
+    g->grid = malloc(opt->grid_height * sizeof(int*));
     if (!g->grid) goto grid_alloc_fail;
 
     /* Switch to two allocation version */
     int i;
-    long **iterator = g->grid;
+    int **iterator = g->grid;
     for (i = 0; i < g->gridsize; i += opt->grid_width)
         *iterator++ = &g->grid_data_ptr[i];
 
@@ -251,7 +241,7 @@ struct gamestate* gamestate_init(struct gameoptions *opt)
     g->score = 0;
     g->score_high = 0;
     g->score_last = 0;
-    g->print_width = digits_ceiling(opt->goal);
+    g->print_width = digits_ceiling(merge_value(merge_goal()));
     g->blocks_in_play = 0;
     g->opts = opt;
 
