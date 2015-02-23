@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -41,6 +42,11 @@ static const char* highscore_retrieve_file(void)
     return buffer;
 }
 
+static inline void string_to_lower(char *str)
+{
+    for (; *str; ++str) *str = tolower(*str);
+}
+
 void highscore_reset(void)
 {
     const char *hsfile = highscore_retrieve_file();
@@ -51,21 +57,15 @@ void highscore_reset(void)
 
     while (1) {
         fgets(resp, resp_length, stdin);
+        string_to_lower(resp);
+
         const size_t sl = strlen(resp);
         if (sl < resp_length)
             resp[sl - 1] = '\0';
 
-        if (!strncmp(resp, "Yes", resp_length) ||
-            !strncmp(resp, "Y",   resp_length) ||
-            !strncmp(resp, "yes", resp_length) ||
-            !strncmp(resp, "y",   resp_length)  )
+        if (!strncmp(resp, "yes", resp_length) || !strncmp(resp, "y", resp_length))
             goto reset_scores;
-
-        else
-        if (!strncmp(resp, "No", resp_length) ||
-            !strncmp(resp, "N",  resp_length) ||
-            !strncmp(resp, "no", resp_length) ||
-            !strncmp(resp, "n",  resp_length)  )
+        else if (!strncmp(resp, "no", resp_length) || !strncmp(resp, "n",  resp_length))
             return;
 
         printf("Please enter Yes or No\n");
