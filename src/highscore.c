@@ -56,6 +56,7 @@ void highscore_reset(void)
     printf("Are you sure you want to reset your scores? Y(es) or N(o)\n");
 
     while (1) {
+        /* fgets is used to avoid queuing that may occur with getchar */
         fgets(resp, resp_length, stdin);
         string_to_lower(resp);
 
