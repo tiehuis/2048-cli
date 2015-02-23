@@ -3,7 +3,7 @@
 A cli version/engine of the game [2048](https://github.com/gabrielecirulli/2048) for your Linux
 terminal.
 
-![Screenshot](http://i.imgur.com/QU7t5mH.png)
+![Screenshot](http://i.imgur.com/qTfXp4J.png)
 
 There currently are 3 versions that can be run. These include a straight-forward terminal
 based, and two using the ncurses and SDL libraries. To add a new graphical version, simply
