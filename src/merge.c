@@ -1,7 +1,6 @@
-#include "assert.h"
 #include "merge.h"
 
-#define MERGE_GOAL 11
+#define MERGE_GOAL (int)(sizeof(merge_values)/sizeof(merge_values[0]))
 
 const long merge_values[] = {
     0, 2, 4, 8, 16, 32, 64, 128, 256, 512,

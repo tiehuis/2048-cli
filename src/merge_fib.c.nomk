@@ -1,11 +1,10 @@
-#include "assert.h"
 #include "merge.h"
 
-#define MERGE_GOAL 17
+#define MERGE_GOAL (int)(sizeof(merge_values)/sizeof(merge_values[0]))
 
 const long merge_values[] = {
-    0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144,
-    233, 377, 610, 987, 1597, 2584
+    0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144,
+    233, 377, 610, 987, 1597
 };
 
 inline long merge_value(const int v1)

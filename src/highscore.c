@@ -44,7 +44,34 @@ static const char* highscore_retrieve_file(void)
 void highscore_reset(void)
 {
     const char *hsfile = highscore_retrieve_file();
+    const size_t resp_length = 16;
+    char resp[resp_length];
 
+    printf("Are you sure you want to reset your scores? Y(es) or N(o)\n");
+
+    while (1) {
+        fgets(resp, resp_length, stdin);
+        const size_t sl = strlen(resp);
+        if (sl < resp_length)
+            resp[sl - 1] = '\0';
+
+        if (!strncmp(resp, "Yes", resp_length) ||
+            !strncmp(resp, "Y",   resp_length) ||
+            !strncmp(resp, "yes", resp_length) ||
+            !strncmp(resp, "y",   resp_length)  )
+            goto reset_scores;
+
+        else
+        if (!strncmp(resp, "No", resp_length) ||
+            !strncmp(resp, "N",  resp_length) ||
+            !strncmp(resp, "no", resp_length) ||
+            !strncmp(resp, "n",  resp_length)  )
+            return;
+
+        printf("Please enter Yes or No\n");
+    }
+
+reset_scores:;
     FILE *fd = fopen(hsfile, "w+");
     fprintf(fd, "%d", 0);
     fclose(fd);

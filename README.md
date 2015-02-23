@@ -13,7 +13,7 @@ create a .c file which implements all the functions in gfx.h and add a Makefile 
     git clone https://github.com/Tiehuis/2048-cli.git
     make
 
-You can easily install this on el >= 5 (CentOS, RedHat Enterprise Linux,
+You can also easily install this on el >= 5 (CentOS, RedHat Enterprise Linux,
 Scientific Linux, Oracle) and Fedora >= 19 using the package-manager:
 
     sudo yum install 2048-cli[-nocurses]
@@ -22,15 +22,19 @@ For el you will need to have the
 [EPEL-repository](https://fedoraproject.org/wiki/EPEL/FAQ#How_can_I_install_the_packages_from_the_EPEL_software_repository.3F)
 enabled.
 
-### Run
-    ./2048
+## Controls
+    hjkl and wasd  Default movement keys
+    q              Quit the current game
 
 ## Options
-    -s <size>      Set the grid border length
-    -b <rate>      Set the block spawn rate
-    -r             Resets hiscore. Will prompt user
-    -c             Enables color support (ncurses version only)
-    -C             Disables color support (ncurses version only)
+    -h             Print the program usage
+    -C             Disable color support (default).
+    -c             Enable color support if supported.
+    -a             Enable animations (default).
+    -A             Disable animations.
+    -r             Reset highscore. Will prompt user.
+    -s SIZE        Set the size of the playing field.
+    -b RATE        Set the rate at which blocks spawn per turn.
 
 Fonts used in SDL version can be found [here](http://www.openfontlibrary.org).
 
