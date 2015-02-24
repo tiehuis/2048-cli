@@ -11,8 +11,7 @@ void draw_then_sleep(struct gfx_state *s, struct gamestate *g)
 
 int main(int argc, char **argv)
 {
-    struct gameoptions *o = gameoptions_default();
-    struct gamestate *g   = gamestate_init(parse_options(o, argc, argv));
+    struct gamestate *g   = gamestate_init(argc, argv);
     struct gfx_state *s   = gfx_init(g);
 
     int game_running = true;

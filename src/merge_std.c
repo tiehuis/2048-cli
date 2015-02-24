@@ -1,6 +1,6 @@
 #include "merge.h"
 
-#define MERGE_GOAL (int)(sizeof(merge_values)/sizeof(merge_values[0]))
+#define MERGE_GOAL (int)((sizeof(merge_values)/sizeof(merge_values[0]))-1)
 
 const long merge_values[] = {
     0, 2, 4, 8, 16, 32, 64, 128, 256, 512,

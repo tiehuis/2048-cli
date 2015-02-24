@@ -192,6 +192,8 @@ void gamestate_new_block(struct gamestate *g)
 
             if (!g->grid[x][y]) p++;
         }
+
+        if (y == g->opts->grid_height - 1) y = 0;
     }
 #endif
 
@@ -211,12 +213,12 @@ static int digits_ceiling(unsigned int n)
     return l + 1;
 }
 
-/* Return NULL if we couldn't allocate space for the gamestate. The opt
- * argument can be passed directly via gameoptions_default i.e
- * *o = gamestate_init(gameoptions_default) is valid, as the delete function
- * will find the pointer to the gameoptions and delete the data accordingly. */
-struct gamestate* gamestate_init(struct gameoptions *opt)
+/* Return NULL if we couldn't allocate space for the gamestate. initializating the
+ * gamestate will parse the options internally, so any caller should pass argc and argv
+ * through this function */
+struct gamestate* gamestate_init(int argc, char **argv)
 {
+    struct gameoptions *opt = parse_options(gameoptions_default(), argc, argv);
     if (!opt) return NULL;
 
     srand(time(NULL));

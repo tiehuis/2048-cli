@@ -38,6 +38,6 @@ int gamestate_end_condition(struct gamestate*);
 void gamestate_new_block(struct gamestate*);
 int  gamestate_tick(struct gfx_state*, struct gamestate*, int, void (*callback)(struct gfx_state*, struct gamestate*));
 void gamestate_clear(struct gamestate*);
-struct gamestate* gamestate_init(struct gameoptions *);
+struct gamestate* gamestate_init(int argc, char **argv);
 
 #endif
