@@ -27,7 +27,8 @@ enabled.
     q              Quit the current game
 
 ## Options
-    -h             Print the program usage
+    -h             Print the program usage.
+    -H             Print the current highscore.
     -C             Disable color support (default).
     -c             Enable color support if supported.
     -a             Enable animations (default).
