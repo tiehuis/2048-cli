@@ -7,7 +7,8 @@
 void draw_then_sleep(struct gfx_state *s, struct gamestate *g)
 {
     gfx_draw(s, g);
-    gfx_sleep(40);
+    /* Have a fixed time for each turn to animate (160 default) */
+    gfx_sleep(160 / g->opts->grid_width);
 }
 
 int main(int argc, char **argv)
