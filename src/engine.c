@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdlib.h>
 #include <time.h>
 #include "merge.h"
@@ -176,32 +177,28 @@ int gamestate_end_condition(struct gamestate *g)
 void gamestate_new_block(struct gamestate *g)
 {
     /* Exit early if there are no spaces to place a block */
-    if (g->blocks_in_play == g->gridsize) return;
+    if (g->blocks_in_play >= g->gridsize) return;
 
-#ifdef FIX
     int block_number = rand() % (g->gridsize - g->blocks_in_play);
 
     int x, y, p = 0;
     for (y = 0; y < g->opts->grid_height; ++y) {
         for (x = 0; x < g->opts->grid_width; ++x) {
-            if (p == block_number) {
-                g->grid[x][y] = rand() & 1 ? 1 : 2;
-                g->blocks_in_play += 1;
-                return;
+            if (!g->grid[x][y]) {
+                if (p == block_number) {
+                    g->grid[x][y] = rand() & 3 ? 1 : 2;
+                    g->blocks_in_play += 1;
+                    return;
+                }
+                else {
+                    ++p;
+                }
             }
-
-            if (!g->grid[x][y]) p++;
         }
-
-        if (y == g->opts->grid_height - 1) y = 0;
     }
-#endif
 
-    /* Use rudimentary for now */
-    int x, y;
-    while (g->grid[x = rand() % g->opts->grid_width][y = rand() % g->opts->grid_height]);
-    g->grid[x][y] = rand() & 1 ? 1 : 2;
-    g->blocks_in_play += 1;
+    /* This should never be reached; but just in case */
+    assert(0);
 }
 
 /* This returns the number of digits in the base10 rep of n. The ceiling is

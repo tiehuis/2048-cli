@@ -13,7 +13,7 @@ void draw_then_sleep(struct gfx_state *s, struct gamestate *g)
 
 int main(int argc, char **argv)
 {
-    struct gamestate *g   = gamestate_init(argc, argv);
+    struct gamestate *g = gamestate_init(argc, argv);
     struct gfx_state *s;
 
     if (g->opts->interactive)
