@@ -218,7 +218,9 @@ static int digits_ceiling(unsigned int n)
  * through this function */
 struct gamestate* gamestate_init(int argc, char **argv)
 {
-    struct gameoptions *opt = parse_options(gameoptions_default(), argc, argv);
+    struct gameoptions *opt = gameoptions_default();
+    if (argc != 0) parse_options(opt, argc, argv);
+
     if (!opt) return NULL;
 
     srand(time(NULL));
