@@ -78,23 +78,28 @@ reset_scores:;
     fclose(fd);
 }
 
-void highscore_load(struct gamestate *g)
+long highscore_load(struct gamestate *g)
 {
     const char *hsfile = highscore_retrieve_file();
+    long result = 0;
 
     FILE *fd = fopen(hsfile, "r");
     if (fd == NULL)
         fd = fopen(hsfile, "w+");
 
-    fscanf(fd, "%ld", &g->score_high);
+    fscanf(fd, "%ld", &result);
     fclose(fd);
+
+    if (g) g->score_high = result;
+    return result;
 }
 
 void highscore_save(struct gamestate *g)
 {
     /* Someone could make their own merge rules for highscores and this could be meaningless,
      * howeverhighscores are in plaintext, so that isn't that much of a concern */
-    if (g->score < g->score_high || g->opts->grid_width != 4 || g->opts->grid_height != 4)
+    if (g->score < g->score_high || g->opts->grid_width != 4 ||
+            g->opts->grid_height != 4 || g->opts->ai == true)
         return;
 
     const char *hsfile = highscore_retrieve_file();

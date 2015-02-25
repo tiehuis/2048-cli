@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include "ai.h"
 #include "engine.h"
 #include "gfx.h"
 
@@ -12,15 +13,21 @@ void draw_then_sleep(struct gfx_state *s, struct gamestate *g)
 int main(int argc, char **argv)
 {
     struct gamestate *g   = gamestate_init(argc, argv);
-    struct gfx_state *s   = gfx_init(g);
+    struct gfx_state *s;
+
+    if (g->opts->interactive)
+        s = gfx_init(g);
 
     int game_running = true;
     while (game_running) {
-        gfx_draw(s, g);
+
+        if (g->opts->interactive)
+            gfx_draw(s, g);
 
 get_new_key:;
         int direction = dir_invalid;
-        switch (gfx_getch(s)) {
+        int value = !g->opts->ai ? gfx_getch(s) : ai_move(g);
+        switch (value) {
             case 'h':
             case 'a':
                 direction = dir_left;
@@ -46,7 +53,8 @@ get_new_key:;
 
         /* Game will only end if 0 moves available */
         if (game_running) {
-            gamestate_tick(s, g, direction, g->opts->animate ? draw_then_sleep : NULL);
+            gamestate_tick(s, g, direction, g->opts->animate && g->opts->interactive
+                    ? draw_then_sleep : NULL);
 
             int spawned;
             for (spawned = 0; spawned < g->opts->spawn_rate; spawned++)
@@ -58,9 +66,13 @@ get_new_key:;
         }
     }
 
-    gfx_destroy(s);
-    printf("Highscore: %ld\n", g->score_high);
-    printf("    Score: %ld\n", g->score);
+    if (g->opts->interactive) {
+        // gfx_getch(s);   // getch here would be good,
+                         // need an exit message for each graphical output
+        gfx_destroy(s);
+    }
+
+    printf("%ld\n", g->score);
     gamestate_clear(g);
     return 0;
 }

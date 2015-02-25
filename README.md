@@ -32,6 +32,8 @@ enabled.
     -c             Enable color support if supported.
     -a             Enable animations (default).
     -A             Disable animations.
+    -i             Enable ai without displaying game.
+    -I             Enable ai and display game.
     -r             Reset highscore. Will prompt user.
     -s SIZE        Set the size of the playing field.
     -b RATE        Set the rate at which blocks spawn per turn.
