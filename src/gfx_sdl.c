@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include "merge.h"
 #include "gfx.h"
 
 /* Side length of a 'pixel' in pixels */

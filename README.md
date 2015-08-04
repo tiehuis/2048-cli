@@ -13,7 +13,20 @@ create a .c file which implements all the functions in gfx.h and add a Makefile 
     git clone https://github.com/Tiehuis/2048-cli.git
     make
 
-You can also easily install this on el >= 5 (CentOS, RedHat Enterprise Linux,
+By default, termios.h is expected to be present for the standard terminal version, and
+a VT100 compatible terminal is being used. If a VT100 terminal is not available, simply
+alter the makefile and remove the '-DVT100' flag. Compiling with ncurses requires
+the development libraries for it, and likewise for using SDL2.
+
+On an ubuntu/debian machine for example, these can be obtained via
+
+    apt-get install libncurses5-dev
+    apt-get install libsdl2-dev libsdl2-ttf-dev
+
+Note: The sdl version is largely to demonstrate plugging in an alternative
+graphics frontend, and is likely not wanted. The ncurses version is recommended.
+
+You can also also easily install this on el >= 5 (CentOS, RedHat Enterprise Linux,
 Scientific Linux, Oracle) and Fedora >= 19 using the package-manager:
 
     sudo yum install 2048-cli[-nocurses]

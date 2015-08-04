@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
+#include "merge.h"
 #include "gfx.h"
 
 #define iterate(n, expression)\
@@ -16,7 +17,10 @@ struct gfx_state {
 
 struct gfx_state* gfx_init(struct gamestate *g)
 {
+    (void) g;
+
     struct gfx_state *s = malloc(sizeof(struct gfx_state));
+    if (!s) return NULL;
     tcgetattr(STDIN_FILENO, &s->oldt);
     s->newt = s->oldt;
     s->newt.c_lflag &= ~(ICANON | ECHO);
@@ -26,6 +30,8 @@ struct gfx_state* gfx_init(struct gamestate *g)
 
 void gfx_draw(struct gfx_state *s, struct gamestate *g)
 {
+    (void) s;
+
 #ifdef VT100
     printf("\033[2J\033[H");
 #endif
@@ -57,6 +63,7 @@ void gfx_draw(struct gfx_state *s, struct gamestate *g)
 
 int gfx_getch(struct gfx_state *s)
 {
+    (void) s;
     return getchar();
 }
 
@@ -65,8 +72,8 @@ void gfx_sleep(int ms)
     usleep(ms * 1000);
 }
 
-void gfx_destroy(struct gfx_state *t)
+void gfx_destroy(struct gfx_state *s)
 {
-    tcsetattr(STDIN_FILENO, TCSANOW, &t->oldt);
-    free(t);
+    tcsetattr(STDIN_FILENO, TCSANOW, &s->oldt);
+    free(s);
 }

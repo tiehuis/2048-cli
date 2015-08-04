@@ -1,30 +1,26 @@
 CC      ?= clang
-CFLAGS  += -g -Wall -Wextra
+CFLAGS  += -Wno-visibility -Wno-incompatible-pointer-types -Wall -Wextra -O2 -DINVERT_COLORS -DVT100
 LFLAGS  +=
-DEFINES := -DINVERT_COLORS -DVT100 $(shell pkg-config --cflags sdl2)
 
 PROGRAM := 2048
 C_FILES := $(wildcard src/*.c)
-O_FILES := $(addprefix obj/, $(notdir $(C_FILES:.c=.o)))
-FILTERED_O_FILES := $(filter-out obj/gfx%.o obj/merge%.o, $(O_FILES))
+MERGE_FILE := src/merge_std.c
+FILTERED_C_FILES := $(filter-out src/gfx%.c src/merge%.c, $(C_FILES))
 
-all: curses
+all: terminal
 
-curses: $(O_FILES)
-	$(CC) $(FILTERED_O_FILES) obj/merge_std.o obj/gfx_curses.o -o $(PROGRAM) -lcurses
+curses: $(FILTERED_C_FILES) src/gfx_curses.c
+	$(CC) $(CFLAGS) $(FILTERED_C_FILES) $(MERGE_FILE) src/gfx_curses.c -o $(PROGRAM) -lcurses
 
-vt100: $(O_FILES)
-	$(CC) $(FILTERED_O_FILES) obj/merge_std.o obj/gfx_terminal.o -o $(PROGRAM)
+terminal: $(FILTERED_C_FILES) src/gfx_terminal.c
+	$(CC) $(CFLAGS) $(FILTERED_C_FILES) $(MERGE_FILE) src/gfx_terminal.c -o $(PROGRAM)
 
-sdl: $(O_FILES)
-	$(CC) $(FILTERED_O_FILES) obj/merge_std.o obj/gfx_sdl.o -o $(PROGRAM) -lSDL2 -lSDL2_ttf
-
-obj/%.o: src/%.c
-	$(CC) $(DEFINES) $(CFLAGS) -c -o $@ $<
+sdl: $(FILTERED_C_FILES) src/gfx_sdl.c
+	$(CC) $(CFLAGS) $(FILTERED_C_FILES) $(MERGE_FILE) src/gfx_sdl.c -o $(PROGRAM) $(shell pkg-config --cflags sdl2) -lSDL2 -lSDL2_ttf
 
 remake: clean all
 
 clean:
-	rm -f $(O_FILES) $(PROGRAM)
+	rm -f $(PROGRAM)
 
 .PHONY: clean remake
