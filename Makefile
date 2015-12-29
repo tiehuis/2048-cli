@@ -1,5 +1,5 @@
 CC      ?= clang
-CFLAGS  += -Wno-visibility -Wno-incompatible-pointer-types -Wall -Wextra -O2 -DINVERT_COLORS -DVT100
+CFLAGS  += -Wno-visibility -Wno-incompatible-pointer-types -Wall -Wextra -O2 -DINVERT_COLORS -DVT100 -O2
 LFLAGS  +=
 
 PROGRAM := 2048

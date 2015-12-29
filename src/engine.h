@@ -2,7 +2,6 @@
 #define ENGINE_H
 
 #include <stdio.h>
-#include "gfx.h"
 #include "options.h"
 
 #define fatal(msg)\
@@ -33,6 +32,8 @@ enum {
     dir_right,
     dir_up
 };
+
+struct gfx_state;
 
 int gamestate_end_condition(struct gamestate*);
 void gamestate_new_block(struct gamestate*);

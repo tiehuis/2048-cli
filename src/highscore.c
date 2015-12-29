@@ -57,7 +57,9 @@ void highscore_reset(void)
 
     while (1) {
         /* fgets is used to avoid queuing that may occur with getchar */
-        fgets(resp, resp_length, stdin);
+        if (fgets(resp, resp_length, stdin) == NULL)
+            return;
+
         string_to_lower(resp);
 
         const size_t sl = strlen(resp);
@@ -87,7 +89,16 @@ long highscore_load(struct gamestate *g)
     if (fd == NULL)
         fd = fopen(hsfile, "w+");
 
-    fscanf(fd, "%ld", &result);
+    if (fd == NULL) {
+        fprintf(stderr, "load: Failed to open highscore file\n");
+        return 0;
+    }
+
+    if (fscanf(fd, "%ld", &result) != 1) {
+        fprintf(stderr, "load: Failed to parse highscore file\n");
+        result = 0;
+    }
+
     fclose(fd);
 
     if (g) g->score_high = result;
@@ -105,6 +116,13 @@ void highscore_save(struct gamestate *g)
     const char *hsfile = highscore_retrieve_file();
 
     FILE *fd = fopen(hsfile, "w");
-    fprintf(fd, "%ld", g->score);
+    if (fd == NULL) {
+        fprintf(stderr, "save: Failed to open highscore file\n");
+        return;
+    }
+
+    if (fprintf(fd, "%ld", g->score) < 0) {
+        fprintf(stderr, "save: Failed to write highscore file\n");
+    }
     fclose(fd);
 }
