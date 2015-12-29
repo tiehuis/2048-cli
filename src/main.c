@@ -57,6 +57,9 @@ get_new_key:;
             gamestate_tick(s, g, direction, g->opts->animate && g->opts->interactive
                     ? draw_then_sleep : NULL);
 
+            if (g->moved == 0)
+                goto get_new_key;
+
             int spawned;
             for (spawned = 0; spawned < g->opts->spawn_rate; spawned++)
                 gamestate_new_block(g);
