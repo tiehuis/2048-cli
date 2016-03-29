@@ -1,6 +1,9 @@
-CC      ?= clang
-CFLAGS  += -Wno-visibility -Wno-incompatible-pointer-types -Wall -Wextra -O2 -DINVERT_COLORS -DVT100 -O2
-LFLAGS  +=
+CC             ?= clang
+TTF_FONT_PATH  ?= res/Anonymous Pro.ttf
+CFLAGS         += -DTTF_FONT_PATH="\"$(TTF_FONT_PATH)\""
+CFLAGS         += -Wno-visibility -Wno-incompatible-pointer-types -Wall -Wextra
+CFLAGS         += -DINVERT_COLORS -DVT100 -O2
+LFLAGS         +=
 
 PROGRAM := 2048
 C_FILES := $(wildcard src/*.c)
