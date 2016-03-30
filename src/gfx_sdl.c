@@ -5,7 +5,6 @@
 #include "gfx.h"
 
 /* Side length of a 'pixel' in pixels */
-#define TTF_FONT_PATH "res/Anonymous Pro.ttf"
 #define TTF_FONT_PT 32
 
 #define iterate(n, expression)\
