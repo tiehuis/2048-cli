@@ -26,6 +26,8 @@ struct gfx_state* gfx_init(struct gamestate *g)
     refresh();
 
     struct gfx_state *s = malloc(sizeof(struct gfx_state));
+    if (!s) return NULL;
+
     s->window_height = g->opts->grid_height * (g->print_width + 2) + 3;
     s->window_width  = g->opts->grid_width * (g->print_width + 2) + 1;
     s->window = newwin(s->window_height, s->window_width, 1, 1);

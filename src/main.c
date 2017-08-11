@@ -14,10 +14,18 @@ void draw_then_sleep(struct gfx_state *s, struct gamestate *g)
 int main(int argc, char **argv)
 {
     struct gamestate *g = gamestate_init(argc, argv);
+    if (!g) {
+        fatal("failed to allocate gamestate");
+    }
+
     struct gfx_state *s = NULL;
 
-    if (g->opts->interactive)
+    if (g->opts->interactive) {
         s = gfx_init(g);
+        if (!s) {
+            fatal("failed to allocate gfx state");
+        }
+    }
 
     int game_running = true;
     while (game_running) {

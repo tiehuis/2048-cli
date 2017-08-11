@@ -2,6 +2,7 @@
 #define ENGINE_H
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "options.h"
 
 #define fatal(msg)\
