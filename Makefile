@@ -1,5 +1,5 @@
 CC             ?= clang
-CFLAGS         += -Wno-visibility -Wno-incompatible-pointer-types -Wall -Wextra
+CFLAGS         += -Wall -Wextra
 CFLAGS         += -DINVERT_COLORS -DVT100 -O2
 LFLAGS         +=
 
@@ -8,7 +8,7 @@ C_FILES := $(wildcard src/*.c)
 MERGE_FILE := src/merge_std.c
 FILTERED_C_FILES := $(filter-out src/gfx%.c src/merge%.c, $(C_FILES))
 
-all: terminal
+all: curses
 
 curses: $(FILTERED_C_FILES) src/gfx_curses.c
 	$(CC) $(CFLAGS) $(FILTERED_C_FILES) $(MERGE_FILE) src/gfx_curses.c -o $(PROGRAM) $(LDFLAGS) -lcurses

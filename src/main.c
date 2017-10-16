@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <ncurses.h>
 #include "ai.h"
 #include "engine.h"
 #include "gfx.h"
@@ -39,21 +40,27 @@ get_new_key:;
         switch (value) {
             case 'h':
             case 'a':
+            case KEY_LEFT:
                 direction = dir_left;
                 break;
             case 'l':
             case 'd':
+            case KEY_RIGHT:
                 direction = dir_right;
                 break;
             case 'j':
             case 's':
+            case KEY_DOWN:
                 direction = dir_down;
                 break;
             case 'k':
             case 'w':
+            case KEY_UP:
                 direction = dir_up;
                 break;
             case 'q':
+            case KEY_EXIT:
+            case 27: //ESC
                 game_running = false;
                 break;
             default:
