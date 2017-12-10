@@ -1,0 +1,76 @@
+.Dd December 10, 2017
+.Dt 2048 6
+.Os
+.
+.Sh NAME
+.Nm 2048
+.Nd play the game 2048 in your terminal
+.
+.Sh SYNOPSIS
+.Nm 2048
+.Op Fl hrcCaA
+.Op Fl s Ar size
+.Op Fl b Ar rate
+.
+.Sh DESCRIPTION
+.Nm
+is an implementation of the popular game, 2048, designed to be run on a
+terminal.
+It is designed to be easy to understand and extend.
+.
+.Sh CONTROLS
+.Bl -tag
+.It Ic hjkl , wasd
+Default movement keys.
+Depending on the graphics implementation, there may be extra alternatives.
+.It Ic q
+Quit the current game.
+.El
+.
+.Sh OPTIONS
+.Bl -tag
+.It Fl h
+Print the program usage.
+.It Fl H
+Print the current highscore.
+.It Fl c
+Enable color support if supported.
+.It Fl C
+Disable color support (default).
+.It Fl a
+Enable animations (default).
+.It Fl A
+Disable animations.
+.It Fl i
+Enable ai without displaying game.
+.It Fl I
+Enable ai and display game.
+.It Fl r
+Reset highscore. Will prompt user.
+.It Fl s Ar size
+Set the size of the playing field.
+Default is 4.
+Maximum value is 16, minimum is 4.
+.It Fl b Ar rate
+Set the rate at which blocks are spawned.
+Default is 1.
+.
+.Sh FILES
+.Bl -tag
+.It Pa $XDG_DATA_HOME/2048/highscore
+High score file.
+If
+.Ev XDG_DATA_HOME
+is unset, defaults to
+.Pa ~/.local/share/2048/highscore .
+.El
+.
+.Sh AUTHORS
+.An -nosplit
+Originally written by
+.An Marc Tiehuis .
+All contributions can be found at
+.Lk https://github.com/Tiehuis/2048-cli .
+.
+.Sh COPYRIGHT
+MIT License (2014)
