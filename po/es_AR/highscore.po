@@ -1,0 +1,56 @@
+# Spanish translations for 2048-cli package.
+# Copyright (C) 2018 THE 2048-cli'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the 2048-cli package.
+# Matias <matiasezequielbian@gmail.com>, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 2048-cli\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-04-19 20:09-0300\n"
+"PO-Revision-Date: 2018-04-19 20:19-0300\n"
+"Last-Translator: Matias <matiasezequielbian@gmail.com>\n"
+"Language-Team: Argentinian\n"
+"Language: es_AR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ASCII\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/highscore.c:58
+#, c-format
+msgid "Are you sure you want to reset your scores? Y(es) or N(o)\n"
+msgstr "Estas seguro que quieres resetear tus puntuaciones? S(i) o N(o)\n"
+
+#: src/highscore.c:76
+#, c-format
+msgid "Please enter Yes or No\n"
+msgstr "Por favor ingresa Si o No\n"
+
+#: src/highscore.c:95
+#, c-format
+msgid "load: Failed to open highscore file\n"
+msgstr "carga: Error al abrir el archivo de puntuaciones maximas\n"
+
+#: src/highscore.c:100
+#, c-format
+msgid "load: Failed to parse highscore file\n"
+msgstr "carga: Error al leer el archivo de puntuaciones maximas\n"
+
+#: src/highscore.c:122
+#, c-format
+msgid "save: Failed to open highscore file\n"
+msgstr "Guardar: Eror al abrir el archivo de puntuaciones maximas\n"
+
+#: src/highscore.c:127
+#, c-format
+msgid "save: Failed to write highscore file\n"
+msgstr "guardar: Error al escribir el archivo de puntuaciones maximas\n"
+
+#: src/highscore.c:71
+msgid "y"
+msgstr "s"
+
+#: src/highscore.c:71
+msgid "yes"
+msgstr "si"

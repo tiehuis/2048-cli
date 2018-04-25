@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include "gfx.h"
 #include "merge.h"
+#include <libintl.h>
+#include <locale.h>
 
 #define NUMBER_OF_COLORS 7
 
@@ -61,11 +63,11 @@ struct gfx_state* gfx_init(struct gamestate *g)
 void gfx_draw(struct gfx_state *s, struct gamestate *g)
 {
     if (g->score_last)
-        mvwprintw(s->window, 0, 0, "Score: %d (+%d)\n", g->score, g->score_last);
+        mvwprintw(s->window, 0, 0, gettext("Score: %d (+%d)\n"), g->score, g->score_last);
     else
-        mvwprintw(s->window, 0, 0, "Score: %d\n", g->score);
+        mvwprintw(s->window, 0, 0, gettext("Score: %d\n"), g->score);
 
-    mvwprintw(s->window, 1, 0, "   Hi: %d\n", g->score_high);
+    mvwprintw(s->window, 1, 0, gettext("   Hi: %d\n"), g->score_high);
 
     wattron(s->window, A_DIM);
     iterate(g->opts->grid_width * (g->print_width + 2) + 1, waddch(s->window, '-'));

@@ -5,6 +5,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include "engine.h"
+#include <libintl.h>
+#include <locale.h>
 
 const char *hs_dir_name  = "2048";
 const char *hs_file_name = "highscore";
@@ -53,7 +55,7 @@ void highscore_reset(void)
     const size_t resp_length = 16;
     char resp[resp_length];
 
-    printf("Are you sure you want to reset your scores? Y(es) or N(o)\n");
+    printf(gettext("Are you sure you want to reset your scores? Y(es) or N(o)\n"));
 
     while (1) {
         /* fgets is used to avoid queuing that may occur with getchar */
@@ -66,12 +68,12 @@ void highscore_reset(void)
         if (sl < resp_length)
             resp[sl - 1] = '\0';
 
-        if (!strncmp(resp, "yes", resp_length) || !strncmp(resp, "y", resp_length))
+        if (!strncmp(resp, gettext("yes"), resp_length) || !strncmp(resp, gettext("y"), resp_length))
             goto reset_scores;
         else if (!strncmp(resp, "no", resp_length) || !strncmp(resp, "n",  resp_length))
             return;
 
-        printf("Please enter Yes or No\n");
+        printf(gettext("Please enter Yes or No\n"));
     }
 
 reset_scores:;
@@ -90,12 +92,12 @@ long highscore_load(struct gamestate *g)
         fd = fopen(hsfile, "w+");
 
     if (fd == NULL) {
-        fprintf(stderr, "load: Failed to open highscore file\n");
+        fprintf(stderr, gettext("load: Failed to open highscore file\n"));
         return 0;
     }
 
     if (fscanf(fd, "%ld", &result) != 1) {
-        fprintf(stderr, "load: Failed to parse highscore file\n");
+        fprintf(stderr, gettext("load: Failed to parse highscore file\n"));
         result = 0;
     }
 
@@ -117,12 +119,12 @@ void highscore_save(struct gamestate *g)
 
     FILE *fd = fopen(hsfile, "w");
     if (fd == NULL) {
-        fprintf(stderr, "save: Failed to open highscore file\n");
+        fprintf(stderr, gettext("save: Failed to open highscore file\n"));
         return;
     }
 
     if (fprintf(fd, "%ld", g->score) < 0) {
-        fprintf(stderr, "save: Failed to write highscore file\n");
+        fprintf(stderr, gettext("save: Failed to write highscore file\n"));
     }
     fclose(fd);
 }

@@ -3,6 +3,8 @@
 #include "ai.h"
 #include "engine.h"
 #include "gfx.h"
+#include <libintl.h>
+#include <locale.h>
 
 void draw_then_sleep(struct gfx_state *s, struct gamestate *g)
 {
@@ -13,6 +15,11 @@ void draw_then_sleep(struct gfx_state *s, struct gamestate *g)
 
 int main(int argc, char **argv)
 {
+	 setlocale (LC_ALL, "");
+	  bindtextdomain ("gfx_curses", getenv("PWD"));
+  	textdomain ("gfx_curses");
+
+	
     struct gamestate *g = gamestate_init(argc, argv);
     if (!g) {
         fatal("failed to allocate gamestate");
