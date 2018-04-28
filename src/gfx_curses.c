@@ -67,7 +67,7 @@ void gfx_draw(struct gfx_state *s, struct gamestate *g)
     else
         mvwprintw(s->window, 0, 0, gettext("Score: %d\n"), g->score);
 
-    mvwprintw(s->window, 1, 0, gettext("   Hi: %d\n"), g->score_high);
+    mvwprintw(s->window, 1, 0, gettext("   Hil: %d\n"), g->score_high);
 
     wattron(s->window, A_DIM);
     iterate(g->opts->grid_width * (g->print_width + 2) + 1, waddch(s->window, '-'));
