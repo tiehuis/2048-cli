@@ -6,12 +6,12 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 2048-cli\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-19 20:09-0300\n"
+"POT-Creation-Date: 2018-05-17 18:12-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE LIDS\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
@@ -20,37 +20,37 @@ msgstr ""
 #: src/highscore.c:58
 #, c-format
 msgid "Are you sure you want to reset your scores? Y(es) or N(o)\n"
-msgstr "Estas seguro que quieres resetear tus puntuaciones? S(i) o N(o)\n"
+msgstr ""
 
 #: src/highscore.c:76
 #, c-format
 msgid "Please enter Yes or No\n"
-msgstr "Por favor ingresa Si o No\n"
+msgstr ""
 
 #: src/highscore.c:95
 #, c-format
 msgid "load: Failed to open highscore file\n"
-msgstr "carga: Error al abrir el archivo de puntuaciones maximas"
+msgstr ""
 
 #: src/highscore.c:100
 #, c-format
 msgid "load: Failed to parse highscore file\n"
-msgstr "carga: Error al leer el archivo de puntuaciones maximas"
+msgstr ""
 
 #: src/highscore.c:122
 #, c-format
 msgid "save: Failed to open highscore file\n"
-msgstr "Guardar: Eror al abrir el archivo de puntuaciones maximas"
+msgstr ""
 
 #: src/highscore.c:127
 #, c-format
 msgid "save: Failed to write highscore file\n"
-msgstr "guardar: Error al escribir el archivo de puntuaciones maximas"
+msgstr ""
 
 #: src/highscore.c:71
 msgid "y"
-msgstr "s"
+msgstr ""
 
 #: src/highscore.c:71
 msgid "yes"
-msgstr "si"
+msgstr ""
