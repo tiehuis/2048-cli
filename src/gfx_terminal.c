@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include "merge.h"
 #include "gfx.h"
+#include <libintl.h>
+#include <locale.h>
 
 #define iterate(n, expression)\
     do {\
@@ -37,11 +39,11 @@ void gfx_draw(struct gfx_state *s, struct gamestate *g)
 #endif
 
     if (g->score_last)
-        printf("Score: %ld (+%ld)\n", g->score, g->score_last);
+        printf(gettext("Score: %ld (+%ld)\n"), g->score, g->score_last);
     else
-        printf("Score: %ld\n", g->score);
+        printf(gettext("Score: %ld\n"), g->score);
 
-    printf("   Hi: %ld\n", g->score_high);
+    printf(gettext("   Hi: %ld\n"), g->score_high);
 
     iterate((g->print_width + 2) * g->opts->grid_width + 1, printf("-")); printf("\n");
 
