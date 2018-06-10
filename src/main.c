@@ -5,6 +5,7 @@
 #include "gfx.h"
 #include <libintl.h>
 #include <locale.h>
+#include <string.h>
 
 void draw_then_sleep(struct gfx_state *s, struct gamestate *g)
 {
@@ -15,9 +16,9 @@ void draw_then_sleep(struct gfx_state *s, struct gamestate *g)
 
 int main(int argc, char **argv)
 {
-	setlocale (LC_ALL, "");
-  bindtextdomain ("gfx_terminal", "/usr/share/locale/");
-  textdomain ("gfx_terminal");
+    setlocale (LC_ALL, "");
+    bindtextdomain ("gfx_terminal", strcat(getenv("PWD"),"/18n/"));
+    textdomain ("gfx_terminal");
 
     struct gamestate *g = gamestate_init(argc, argv);
     if (!g) {
