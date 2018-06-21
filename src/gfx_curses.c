@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include "gfx.h"
 #include "merge.h"
-#include <libintl.h>
+#include <gettext.h>
 #include <locale.h>
 
 #define NUMBER_OF_COLORS 7
