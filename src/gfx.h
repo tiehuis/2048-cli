@@ -1,6 +1,11 @@
 #ifndef GFX_H
 #define GFX_H
 
+#define INPUT_UP	0
+#define INPUT_DOWN	1
+#define INPUT_LEFT	2
+#define INPUT_RIGHT	3
+
 #include "engine.h"
 
 struct gfx_state;
