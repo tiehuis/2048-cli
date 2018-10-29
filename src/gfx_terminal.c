@@ -41,6 +41,9 @@ void gfx_draw(struct gfx_state *s, struct gamestate *g)
     else
         printf("Score: %ld\n", g->score);
 
+    if (g->score >= g->score_high) 
+	g->score_high = g->score;
+
     printf("   Hi: %ld\n", g->score_high);
 
     iterate((g->print_width + 2) * g->opts->grid_width + 1, printf("-")); printf("\n");
