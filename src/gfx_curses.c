@@ -21,6 +21,7 @@ struct gfx_state* gfx_init(struct gamestate *g)
 {
     initscr();
     cbreak();
+    keypad(stdscr, true);
     noecho();
     curs_set(FALSE);
     refresh();
@@ -116,7 +117,27 @@ int gfx_getch(struct gfx_state *s)
     nodelay(s->window, TRUE);
     while (wgetch(s->window) != ERR);
     nodelay(s->window, FALSE);
-    return c;
+
+    switch (c)
+    {
+	case KEY_UP:
+		return INPUT_UP;
+		break;
+	case KEY_DOWN:
+		return INPUT_DOWN;
+		break;
+	case KEY_RIGHT:
+		return INPUT_RIGHT;
+		break;
+	case KEY_LEFT:
+		return INPUT_LEFT;
+		break;
+
+	default:
+		return c;
+		break;
+	
+    }
 }
 
 void gfx_sleep(int ms)

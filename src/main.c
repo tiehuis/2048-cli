@@ -39,18 +39,22 @@ get_new_key:;
         switch (value) {
             case 'h':
             case 'a':
+	    case INPUT_LEFT:
                 direction = dir_left;
                 break;
             case 'l':
             case 'd':
+	    case INPUT_RIGHT:
                 direction = dir_right;
                 break;
             case 'j':
             case 's':
+	    case INPUT_DOWN:
                 direction = dir_down;
                 break;
             case 'k':
             case 'w':
+	    case INPUT_UP:
                 direction = dir_up;
                 break;
             case 'q':
