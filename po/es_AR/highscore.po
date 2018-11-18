@@ -1,0 +1,56 @@
+# Spanish translations for PACKAGE package.
+# Copyright (C) 2018 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Matias <matiasezequielbian@gmail.com>, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-05-17 18:12-0300\n"
+"PO-Revision-Date: 2018-05-17 18:19-0300\n"
+"Last-Translator: Matias <matiasezequielbian@gmail.com>\n"
+"Language-Team: Argentinian <translation-es-AR@lists.sourceforge.net>\n"
+"Language: es_AR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/highscore.c:58
+#, c-format
+msgid "Are you sure you want to reset your scores? Y(es) or N(o)\n"
+msgstr "¿Estás seguro que quieres reiniciar tus puntuaciones? (S)i o (N)o\n"
+
+#: src/highscore.c:76
+#, c-format
+msgid "Please enter Yes or No\n"
+msgstr "Por favor ingresa Si o No\n"
+
+#: src/highscore.c:95
+#, c-format
+msgid "load: Failed to open highscore file\n"
+msgstr "Carga: Error al abrir el archivo de puntuaciones máximas\n"
+
+#: src/highscore.c:100
+#, c-format
+msgid "load: Failed to parse highscore file\n"
+msgstr "Carga: Error al parsear el archivo de puntuaciones máximas\n"
+
+#: src/highscore.c:122
+#, c-format
+msgid "save: Failed to open highscore file\n"
+msgstr "Guardado: Error al abrir el archivo de puntuaciones máximas\n"
+
+#: src/highscore.c:127
+#, c-format
+msgid "save: Failed to write highscore file\n"
+msgstr "Guardado: Error al escribir el archivo de puntuaciones máximas\n"
+
+#: src/highscore.c:71
+msgid "y"
+msgstr "s"
+
+#: src/highscore.c:71
+msgid "yes"
+msgstr "si"

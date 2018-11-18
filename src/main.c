@@ -3,6 +3,9 @@
 #include "ai.h"
 #include "engine.h"
 #include "gfx.h"
+#include <libintl.h>
+#include <locale.h>
+#include <string.h>
 
 void draw_then_sleep(struct gfx_state *s, struct gamestate *g)
 {
@@ -11,8 +14,25 @@ void draw_then_sleep(struct gfx_state *s, struct gamestate *g)
     gfx_sleep(160 / g->opts->grid_width);
 }
 
+char *targetDir(char *env, char *path)
+{
+    char *dir;
+    char *dirEnv;
+    dirEnv = getenv(env);
+    dir = malloc(strlen(dirEnv) + strlen(path) + 1);
+    strcpy(dir, dirEnv);
+    strcat(dir,path);
+    return dir;
+}
+
 int main(int argc, char **argv)
 {
+
+    
+    setlocale (LC_ALL, "");
+    bindtextdomain ("gfx_terminal", targetDir("PWD","/18n/"));
+    textdomain ("gfx_terminal");
+
     struct gamestate *g = gamestate_init(argc, argv);
     if (!g) {
         fatal("failed to allocate gamestate");
