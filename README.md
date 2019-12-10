@@ -1,5 +1,7 @@
 # 2048-cli
 
+[![run on repl.it](http://repl.it/badge/github/tiehuis/2048-cli)](https://repl.it/github/tiehuis/2048-cli)
+
 A cli version/engine of the game [2048](https://github.com/gabrielecirulli/2048)=
 for your Linux terminal.
 
