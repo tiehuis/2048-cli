@@ -23,7 +23,7 @@ The next step is to generate the .po files with the following command (change 'e
 ```
 msginit --input=po/gfx_curses.pot --locale=es_AR --output=po/es_AR/gfx_curses.po
 msginit --input=po/gfx_terminal.pot --locale=es_AR --output=po/es_AR/gfx_terminal.po
-msginit --input=po/highscore.pot --locale=es_AR --output=po/es_AR/gfx_highscore.po
+msginit --input=po/highscore.pot --locale=es_AR --output=po/es_AR/highscore.po
 ```
 
 ### Translation
@@ -39,15 +39,15 @@ for example:
 Nwe should create the directory where we'll place the .mo files (change es_AR by your language standard name):
 
 ```
-mkdir 18n/es_AR/LC_MESSAGES
+mkdir -p 18n/es_AR/LC_MESSAGES
 ```
 
 The last step is to generate the .mo file:
 
 ```
-msgfmt --output-file=/18n/es_AR/LC_MESSAGES/gfx_curses.mo po/es_AR/gfx_curses.po
-msgfmt --output-file=/18n/es_AR/LC_MESSAGES/gfx_terminal.mo po/es_AR/gfx_terminal.po
-msgfmt --output-file=/18n/es_AR/LC_MESSAGES/highscore.mo po/es_AR/highscore.po
+msgfmt --output-file=18n/es_AR/LC_MESSAGES/gfx_curses.mo po/es_AR/gfx_curses.po
+msgfmt --output-file=18n/es_AR/LC_MESSAGES/gfx_terminal.mo po/es_AR/gfx_terminal.po
+msgfmt --output-file=18n/es_AR/LC_MESSAGES/highscore.mo po/es_AR/highscore.po
 ```
 
-##And this is it!
+## And this is it!
