@@ -1,8 +1,5 @@
-#include <stdlib.h>
 #include "gfx.h"
 #include "merge.h"
-//#include <gettext.h>
-//#include <locale.h>
 
 #include <efi.h>
 #include <efilib.h>
@@ -34,12 +31,6 @@ struct gfx_state* gfx_init(struct gamestate *g)
     uefi_call_wrapper(ST->ConOut->QueryMode, 4, ST->ConOut, ST->ConOut->Mode->Mode, &s->window_width, &s->window_height);
     uefi_call_wrapper(ST->ConOut->SetCursorPosition, 3, ST->ConOut, 0, 0);
     uefi_call_wrapper(ST->ConOut->EnableCursor, 2, ST->ConOut, false);
-    //initscr();
-    //cbreak();
-    //keypad(stdscr, true);
-    //noecho();
-    //curs_set(FALSE);
-    //refresh();
 
     s->window_height = g->opts->grid_height * (g->print_width + 2) + 3;
     s->window_width  = g->opts->grid_width * (g->print_width + 2) + 1;
@@ -75,17 +66,16 @@ void gfx_draw(struct gfx_state *s, struct gamestate *g)
 {
     if (g->score_last) {
 	uefi_call_wrapper(ST->ConOut->SetCursorPosition, 3, ST->ConOut, 0, 0);
-        Print(L"Score: %d (+%d)\n", g->score, g->score_last);
+        Print(L"Score: %ld (+%ld)     \n", g->score, g->score_last);
     } else {
 	uefi_call_wrapper(ST->ConOut->SetCursorPosition, 3, ST->ConOut, 0, 0);
-        Print(L"Score: %d\n", g->score);
+        Print(L"Score: %ld                  \n", g->score);
     }
 
     if (g->score >= g->score_high)
         g->score_high = g->score;
 
-    uefi_call_wrapper(ST->ConOut->SetCursorPosition, 3, ST->ConOut, 0, 1);
-    Print(L"   Hil: %d\n", g->score_high);
+    Print(L"   Hi: %ld\n", g->score_high);
 
     //wattron(s->window, A_DIM);
     iterate(g->opts->grid_width * (g->print_width + 2) + 1, Print(L"-"));
@@ -123,10 +113,11 @@ void gfx_draw(struct gfx_state *s, struct gamestate *g)
         }
     }
 
+    Print(L"\n");
     //wattron(s->window, A_DIM);
     iterate(g->opts->grid_height * (g->print_width + 2) + 1, Print(L"-"));
     //wattroff(s->window, A_DIM);
-    //wrefresh(s->window);
+    Print(L"\n");
 }
 
 int gfx_getch(struct gfx_state *s)
@@ -161,7 +152,6 @@ int gfx_getch(struct gfx_state *s)
 		break;
 	
     }
-    return 0;
 }
 
 #define EFI_TIMER_PERIOD_MILLISECONDS(Milliseconds) MultU64x32((UINT64)(Milliseconds), 10000)
@@ -192,4 +182,5 @@ void gfx_sleep(int ms)
 void gfx_destroy(struct gfx_state *s)
 {
     FreePool(s);
+    uefi_call_wrapper(ST->ConOut->EnableCursor, 2, ST->ConOut, true);
 }
