@@ -27,7 +27,7 @@ struct gfx_state {
 
 struct gfx_state* gfx_init(struct gamestate *g)
 {
-    struct gfx_state *s = malloc(sizeof(struct gfx_state));
+    struct gfx_state *s = AllocatePool(sizeof(struct gfx_state));
     if (!s) return NULL;
 
     uefi_call_wrapper(ST->ConOut->ClearScreen, 1, ST->ConOut);

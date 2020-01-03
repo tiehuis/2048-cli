@@ -2,10 +2,10 @@ ARCH            = $(shell uname -m | sed s,i[3456789]86,ia32,)
 
 C_FILES := $(wildcard *.c)
 MERGE_FILE := merge_std.c
-FILTERED_C_FILES := $(filter-out gfx%.c merge%.c, $(C_FILES))
+FILTERED_C_FILES := $(filter-out gfx%.c merge%.c, $(C_FILES)) $(MERGE_FILE) gfx_uefi.c
 
-OBJS            = $(FILTERED_C_FILES:.c=.o) gfx_uefi.o
-TARGET          = hello.efi
+OBJS            = $(FILTERED_C_FILES:.c=.o)
+TARGET          = 2048.efi
 
 EFIINC          = /usr/include/efi
 EFIINCS         = -I$(EFIINC) -I$(EFIINC)/$(ARCH) -I$(EFIINC)/protocol
@@ -26,7 +26,7 @@ LDFLAGS         = -nostdlib -znocombreloc -T $(EFI_LDS) -shared \
 
 all: $(TARGET)
 
-hello.so: $(OBJS)
+2048.so: $(OBJS)
 	ld $(LDFLAGS) $(OBJS) -o $@ -lefi -lgnuefi
 
 %.efi: %.so
@@ -35,4 +35,4 @@ hello.so: $(OBJS)
 		--target=efi-app-$(ARCH) $^ $@
 
 clean:
-	rm -f *.o hello.efi hello.so
+	rm -f *.o 2048.efi 2048.so
