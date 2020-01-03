@@ -1,11 +1,11 @@
-#include <stdio.h>
 #include <stdbool.h>
 #include "ai.h"
 #include "engine.h"
 #include "gfx.h"
-#include <libintl.h>
-#include <locale.h>
 #include <string.h>
+
+#include <efi.h>
+#include <efilib.h>
 
 void draw_then_sleep(struct gfx_state *s, struct gamestate *g)
 {
@@ -14,6 +14,7 @@ void draw_then_sleep(struct gfx_state *s, struct gamestate *g)
     gfx_sleep(160 / g->opts->grid_width);
 }
 
+#if 0
 char *targetDir(char *env, char *path)
 {
     char *dir;
@@ -24,14 +25,21 @@ char *targetDir(char *env, char *path)
     strcat(dir,path);
     return dir;
 }
+#endif
 
-int main(int argc, char **argv)
+EFI_STATUS
+EFIAPI
+efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
 {
+    INTN argc;
+    CHAR16 **argv;
 
+    InitializeLib(ImageHandle, SystemTable);
+    argc = GetShellArgcArgv(ImageHandle, &argv);
     
-    setlocale (LC_ALL, "");
-    bindtextdomain ("gfx_terminal", targetDir("PWD","/18n/"));
-    textdomain ("gfx_terminal");
+    //setlocale (LC_ALL, "");
+    //bindtextdomain ("gfx_terminal", targetDir("PWD","/18n/"));
+    //textdomain ("gfx_terminal");
 
     struct gamestate *g = gamestate_init(argc, argv);
     if (!g) {
@@ -108,7 +116,7 @@ get_new_key:;
         gfx_destroy(s);
     }
 
-    printf("%ld\n", g->score);
+    Print(L"%ld\n", g->score);
     gamestate_clear(g);
-    return 0;
+    return EFI_SUCCESS;
 }

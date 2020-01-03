@@ -1,3 +1,8 @@
+*~
+*.swp
 2048*
 *.o
 *.core
+hello.efi
+hello.so
+tags

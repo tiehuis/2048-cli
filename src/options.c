@@ -1,19 +1,20 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <stdbool.h>
 #include "highscore.h"
 #include "options.h"
 
+#include <efi.h>
+#include <efilib.h>
+
 void print_usage(void)
 {
-    printf("usage: 2048 [-cCaAiIrh] [-s SIZE] [-b RATE]\n");
+    Print(L"usage: 2048 [-cCaAiIrh] [-s SIZE] [-b RATE]\n");
 }
 
 
 /* Initial game options */
 struct gameoptions* gameoptions_default(void)
 {
-    struct gameoptions *opt = malloc(sizeof(struct gameoptions));
+    struct gameoptions *opt = AllocatePool(sizeof(struct gameoptions));
     if (!opt) return NULL;
 
     opt->grid_height = DEFAULT_GRID_HEIGHT;
@@ -30,11 +31,13 @@ struct gameoptions* gameoptions_default(void)
 
 void gameoptions_destroy(struct gameoptions *opt)
 {
-    free(opt);
+    FreePool(opt);
 }
 
-struct gameoptions* parse_options(struct gameoptions *opt, int argc, char **argv)
+struct gameoptions* parse_options(struct gameoptions *opt, int argc, CHAR16 **argv)
 {
+    Print(L"getopt(%d)\n", argc);
+#if 0
     int c;
     while ((c = getopt(argc, argv, "aArcCiIhHs:b:")) != -1) {
         switch (c) {
@@ -80,6 +83,7 @@ struct gameoptions* parse_options(struct gameoptions *opt, int argc, char **argv
             exit(0);
         }
     }
+#endif
 
     return opt;
 }

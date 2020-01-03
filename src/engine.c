@@ -5,6 +5,9 @@
 #include "engine.h"
 #include "highscore.h"
 
+#include <efi.h>
+#include <efilib.h>
+
 /* Utilize block counter to improve some of the functions so they can run
  * quicker */
 
@@ -213,23 +216,23 @@ static int digits_ceiling(unsigned int n)
 /* Return NULL if we couldn't allocate space for the gamestate. initializating the
  * gamestate will parse the options internally, so any caller should pass argc and argv
  * through this function */
-struct gamestate* gamestate_init(int argc, char **argv)
+struct gamestate* gamestate_init(int argc, CHAR16 **argv)
 {
     struct gameoptions *opt = gameoptions_default();
     if (!opt) return NULL;
 
     if (argc != 0) parse_options(opt, argc, argv);
 
-    srand(time(NULL));
+    //srand(time(NULL));
 
-    struct gamestate *g = malloc(sizeof(struct gamestate));
+    struct gamestate *g = AllocatePool(sizeof(struct gamestate));
     if (!g) goto gamestate_alloc_fail;
     g->gridsize = opt->grid_width * opt->grid_height;
 
-    g->grid_data_ptr = calloc(g->gridsize, sizeof(int));
+    g->grid_data_ptr = AllocateZeroPool(g->gridsize*sizeof(int));
     if (!g->grid_data_ptr) goto grid_data_alloc_fail;
 
-    g->grid = malloc(opt->grid_height * sizeof(int*));
+    g->grid = AllocatePool(opt->grid_height * sizeof(int*));
     if (!g->grid) goto grid_alloc_fail;
 
     /* Switch to two allocation version */
@@ -260,9 +263,9 @@ struct gamestate* gamestate_init(int argc, char **argv)
     return g;
 
 grid_alloc_fail:
-    free(g->grid_data_ptr);
+    FreePool(g->grid_data_ptr);
 grid_data_alloc_fail:
-    free(g);
+    FreePool(g);
 gamestate_alloc_fail:
     return NULL;
 }
@@ -285,7 +288,7 @@ void gamestate_clear(struct gamestate *g)
 {
     highscore_save(g);
     gameoptions_destroy(g->opts);
-    free(g->grid_data_ptr);   /* Free grid data */
-    free(g->grid);      /* Free pointers to data slots */
-    free(g);
+    FreePool(g->grid_data_ptr);   /* Free grid data */
+    FreePool(g->grid);      /* Free pointers to data slots */
+    FreePool(g);
 }
