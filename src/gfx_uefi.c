@@ -22,6 +22,26 @@ struct gfx_state {
     INTN window_height, window_width;
 };
 
+INTN uefi_color_array[] = {
+#ifdef INVERT_COLORS
+    EFI_BLACK   | EFI_BACKGROUND_RED,
+    EFI_BLACK   | EFI_BACKGROUND_GREEN,
+    EFI_BLACK   | EFI_BACKGROUND_BROWN,
+    EFI_BLACK   | EFI_BACKGROUND_BLUE,
+    EFI_BLACK   | EFI_BACKGROUND_MAGENTA,
+    EFI_BLACK   | EFI_BACKGROUND_CYAN,
+    EFI_BLACK   | EFI_BACKGROUND_LIGHTGRAY,
+#else
+    EFI_RED     | EFI_BACKGROUND_BLACK,
+    EFI_GREEN   | EFI_BACKGROUND_BLACK,
+    EFI_YELLOW  | EFI_BACKGROUND_BLACK,
+    EFI_BLUE    | EFI_BACKGROUND_BLACK,
+    EFI_MAGENTA | EFI_BACKGROUND_BLACK,
+    EFI_CYAN    | EFI_BACKGROUND_BLACK,
+    EFI_WHITE   | EFI_BACKGROUND_BLACK,
+#endif
+};
+
 struct gfx_state* gfx_init(struct gamestate *g)
 {
     struct gfx_state *s = AllocatePool(sizeof(struct gfx_state));
@@ -34,30 +54,6 @@ struct gfx_state* gfx_init(struct gamestate *g)
 
     s->window_height = g->opts->grid_height * (g->print_width + 2) + 3;
     s->window_width  = g->opts->grid_width * (g->print_width + 2) + 1;
-
-#if 0
-    if (g->opts->enable_color && has_colors()) {
-        start_color();
-
-#ifdef INVERT_COLORS
-        init_pair(1, COLOR_BLACK, COLOR_RED);
-        init_pair(2, COLOR_BLACK, COLOR_GREEN);
-        init_pair(3, COLOR_BLACK, COLOR_YELLOW);
-        init_pair(4, COLOR_BLACK, COLOR_BLUE);
-        init_pair(5, COLOR_BLACK, COLOR_MAGENTA);
-        init_pair(6, COLOR_BLACK, COLOR_CYAN);
-        init_pair(7, COLOR_BLACK, COLOR_WHITE);
-#else
-        init_pair(1, COLOR_RED, COLOR_BLACK);
-        init_pair(2, COLOR_GREEN, COLOR_BLACK);
-        init_pair(3, COLOR_YELLOW, COLOR_BLACK);
-        init_pair(4, COLOR_BLUE, COLOR_BLACK);
-        init_pair(5, COLOR_MAGENTA, COLOR_BLACK);
-        init_pair(6, COLOR_CYAN, COLOR_BLACK);
-        init_pair(7, COLOR_WHITE, COLOR_BLACK);
-#endif
-    }
-#endif
 
     return s;
 }
@@ -95,11 +91,16 @@ void gfx_draw(struct gfx_state *s, struct gamestate *g)
 
         for (x = 0; x < g->opts->grid_width; ++x) {
             if (g->grid[x][y]) {
-                //wattron(s->window, COLOR_PAIR(g->grid[x][y] % NUMBER_OF_COLORS + 1));
+		if (g->opts->enable_color) {
+		    UINTN attr = uefi_color_array[g->grid[x][y] % NUMBER_OF_COLORS];
+		    uefi_call_wrapper(ST->ConOut->SetAttribute, 2, ST->ConOut, attr);
+		}
 		uefi_call_wrapper(ST->ConOut->SetCursorPosition, 3, ST->ConOut, xpos, ypos);
                 Print(L"%-*ld", g->print_width, merge_value(g->grid[x][y]));
                 print_pos(ypos, xpos + g->print_width, L" ");
-                //wattroff(s->window, COLOR_PAIR(g->grid[x][y] % NUMBER_OF_COLORS + 1));
+		if (g->opts->enable_color) {
+		    uefi_call_wrapper(ST->ConOut->SetAttribute, 2, ST->ConOut, EFI_LIGHTGRAY | EFI_BACKGROUND_BLACK);
+		}
 
                 //wattron(s->window, A_DIM);
                 print_pos(ypos, xpos + g->print_width + 1, L"");

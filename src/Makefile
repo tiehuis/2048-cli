@@ -17,6 +17,8 @@ EFI_LDS         = $(EFILIB)/elf_$(ARCH)_efi.lds
 #CFLAGS          = -nostdinc $(EFIINCS) -fno-stack-protector -fpic
 CFLAGS          = $(EFIINCS) -fno-stack-protector -fpic \
 		  -fshort-wchar -mno-red-zone -Wall 
+CFLAGS          += -DINVERT_COLORS -O2
+
 ifeq ($(ARCH),x86_64)
   CFLAGS += -DEFI_FUNCTION_WRAPPER
 endif
