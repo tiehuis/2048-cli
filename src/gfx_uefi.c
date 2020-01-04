@@ -78,7 +78,9 @@ void gfx_draw(struct gfx_state *s, struct gamestate *g)
     Print(L"   Hi: %ld\n", g->score_high);
 
     //wattron(s->window, A_DIM);
-    iterate(g->opts->grid_width * (g->print_width + 2) + 1, Print(L"-"));
+    Print(L"%c", BOXDRAW_DOWN_RIGHT);
+    iterate(g->opts->grid_width * (g->print_width + 2) + 1 - 2, Print(L"%c", (i+g->print_width+3) % (g->print_width+2) ? BOXDRAW_HORIZONTAL : BOXDRAW_DOWN_HORIZONTAL));
+    Print(L"%c", BOXDRAW_DOWN_LEFT);
     //wattroff(s->window, A_DIM);
 
     int x, y,
@@ -87,7 +89,8 @@ void gfx_draw(struct gfx_state *s, struct gamestate *g)
 
     for (y = 0; y < g->opts->grid_height; ++y, ++ypos, xpos = 0) {
         //wattron(s->window, A_DIM);
-        print_pos(ypos, xpos++, L"|");
+        print_pos(ypos, xpos++, L"");
+	Print(L"%c", BOXDRAW_VERTICAL);
         //wattroff(s->window, A_DIM);
 
         for (x = 0; x < g->opts->grid_width; ++x) {
@@ -99,13 +102,14 @@ void gfx_draw(struct gfx_state *s, struct gamestate *g)
                 //wattroff(s->window, COLOR_PAIR(g->grid[x][y] % NUMBER_OF_COLORS + 1));
 
                 //wattron(s->window, A_DIM);
-                print_pos(ypos, xpos + g->print_width + 1, L"|");
+                print_pos(ypos, xpos + g->print_width + 1, L"");
+		Print(L"%c", BOXDRAW_VERTICAL);
                 //wattroff(s->window, A_DIM);
             }
             else {
                 //wattron(s->window, A_DIM);
                 iterate(g->print_width + 1, Print(L" "));
-                Print(L"|");
+                Print(L"%c", BOXDRAW_VERTICAL);
                 //wattroff(s->window, A_DIM);
             }
 
@@ -115,7 +119,9 @@ void gfx_draw(struct gfx_state *s, struct gamestate *g)
 
     Print(L"\n");
     //wattron(s->window, A_DIM);
-    iterate(g->opts->grid_height * (g->print_width + 2) + 1, Print(L"-"));
+    Print(L"%c", BOXDRAW_UP_RIGHT);
+    iterate(g->opts->grid_width * (g->print_width + 2) + 1 - 2, Print(L"%c", (i+g->print_width+3) % (g->print_width+2) ? BOXDRAW_HORIZONTAL : BOXDRAW_UP_HORIZONTAL));
+    Print(L"%c", BOXDRAW_UP_LEFT);
     //wattroff(s->window, A_DIM);
     Print(L"\n");
 }
