@@ -7,7 +7,7 @@
 
 void print_usage(void)
 {
-    Print(L"usage: 2048 [-cCaAiIrh] [-s SIZE] [-b RATE]\n");
+    Print(L"usage: 2048 [-c] [-C] [-a] [-A] [-i] [-I] [-r] [-h] [-H] [-s SIZE] [-b RATE]\n");
 }
 
 
@@ -36,11 +36,14 @@ void gameoptions_destroy(struct gameoptions *opt)
 
 struct gameoptions* parse_options(struct gameoptions *opt, int argc, CHAR16 **argv)
 {
-    Print(L"getopt(%d)\n", argc);
-#if 0
-    int c;
-    while ((c = getopt(argc, argv, "aArcCiIhHs:b:")) != -1) {
-        switch (c) {
+    Print(L"getopt(%d) %s\n", argc, argv[0]);
+    argc--; argv++;  /* skip program name */
+    while (argc > 0) {
+	if(argv[0][0] != '-' || argv[0][1] == '\0' || argv[0][2] != '\0') {
+	    print_usage();
+            Exit(EFI_INVALID_PARAMETER, 0, NULL);
+	}
+        switch (argv[0][1]) {
         case 'a':
             opt->animate = true;
             break;
@@ -63,27 +66,37 @@ struct gameoptions* parse_options(struct gameoptions *opt, int argc, CHAR16 **ar
             break;
         case 's':;
             /* Stick with square for now */
-            int optint = strtol(optarg, NULL, 10);
+	    if(argc < 2) {
+		print_usage();
+		Exit(EFI_INVALID_PARAMETER, 0, NULL);
+	    }
+            int optint = Atoi(argv[1]);
             if (optint < CONSTRAINT_GRID_MAX && optint > CONSTRAINT_GRID_MIN) {
                 opt->grid_height = optint;
                 opt->grid_width = optint;
             }
+	    argc--; argv++;
             break;
         case 'b':
-            opt->spawn_rate = strtol(optarg, NULL, 10);
+	    if(argc < 2) {
+		print_usage();
+		Exit(EFI_INVALID_PARAMETER, 0, NULL);
+	    }
+            opt->spawn_rate = Atoi(argv[1]);
+	    argc--; argv++;
             break;
         case 'r':
             highscore_reset();
-            exit(0);
+            Exit(EFI_SUCCESS, 0, NULL);
         case 'h':
             print_usage();
-            exit(0);
+            Exit(EFI_SUCCESS, 0, NULL);
         case 'H':
             printf("%ld\n", highscore_load(NULL));
-            exit(0);
+            Exit(EFI_SUCCESS, 0, NULL);
         }
+	argc--; argv++;
     }
-#endif
 
     return opt;
 }
