@@ -51,7 +51,6 @@ static inline void string_to_lower(char *str)
 
 void highscore_reset(void)
 {
-#if 0
     const char *hsfile = highscore_retrieve_file();
     const size_t resp_length = 16;
     char resp[resp_length];
@@ -81,12 +80,10 @@ reset_scores:;
     FILE *fd = fopen(hsfile, "w+");
     fprintf(fd, "%d", 0);
     fclose(fd);
-#endif
 }
 
 long highscore_load(struct gamestate *g)
 {
-#if 0
     const char *hsfile = highscore_retrieve_file();
     long result = 0;
 
@@ -108,13 +105,10 @@ long highscore_load(struct gamestate *g)
 
     if (g) g->score_high = result;
     return result;
-#endif
-    return 0;
 }
 
 void highscore_save(struct gamestate *g)
 {
-#if 0
     /* Someone could make their own merge rules for highscores and this could be meaningless,
      * howeverhighscores are in plaintext, so that isn't that much of a concern */
     if (g->score < g->score_high || g->opts->grid_width != 4 ||
@@ -133,5 +127,4 @@ void highscore_save(struct gamestate *g)
         fprintf(stderr, gettext("save: Failed to write highscore file\n"));
     }
     fclose(fd);
-#endif
 }

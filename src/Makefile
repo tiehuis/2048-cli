@@ -2,7 +2,7 @@ ARCH            = $(shell uname -m | sed s,i[3456789]86,ia32,)
 
 C_FILES := $(wildcard *.c)
 MERGE_FILE := merge_std.c
-FILTERED_C_FILES := $(filter-out gfx%.c merge%.c, $(C_FILES)) $(MERGE_FILE) gfx_uefi.c
+FILTERED_C_FILES := $(filter-out gfx%.c merge%.c highscore%.c, $(C_FILES)) $(MERGE_FILE) gfx_uefi.c highscore_uefi.c
 
 OBJS            = $(FILTERED_C_FILES:.c=.o)
 TARGET          = 2048.efi
