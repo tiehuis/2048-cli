@@ -36,7 +36,6 @@ void gameoptions_destroy(struct gameoptions *opt)
 
 struct gameoptions* parse_options(struct gameoptions *opt, int argc, CHAR16 **argv)
 {
-    Print(L"getopt(%d) %s\n", argc, argv[0]);
     argc--; argv++;  /* skip program name */
     while (argc > 0) {
 	if(argv[0][0] != '-' || argv[0][1] == '\0' || argv[0][2] != '\0') {
@@ -92,7 +91,7 @@ struct gameoptions* parse_options(struct gameoptions *opt, int argc, CHAR16 **ar
             print_usage();
             Exit(EFI_SUCCESS, 0, NULL);
         case 'H':
-            printf("%ld\n", highscore_load(NULL));
+            Print(L"%ld\n", highscore_load(NULL));
             Exit(EFI_SUCCESS, 0, NULL);
         }
 	argc--; argv++;
