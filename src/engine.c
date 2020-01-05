@@ -218,12 +218,15 @@ static int digits_ceiling(unsigned int n)
  * through this function */
 struct gamestate* gamestate_init(int argc, CHAR16 **argv)
 {
+    EFI_TIME Time;
+
     struct gameoptions *opt = gameoptions_default();
     if (!opt) return NULL;
 
     if (argc != 0) parse_options(opt, argc, argv);
 
-    //srand(time(NULL));
+    uefi_call_wrapper(ST->RuntimeServices->GetTime, 2, &Time, NULL);
+    srand(Time.Day*24*3600+Time.Hour*3600+Time.Minute*60+Time.Second+Time.Nanosecond);
 
     struct gamestate *g = AllocatePool(sizeof(struct gamestate));
     if (!g) goto gamestate_alloc_fail;
