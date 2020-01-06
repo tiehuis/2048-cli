@@ -1,19 +1,20 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <stdbool.h>
 #include "highscore.h"
 #include "options.h"
 
+#include <efi.h>
+#include <efilib.h>
+
 void print_usage(void)
 {
-    printf("usage: 2048 [-cCaAiIrh] [-s SIZE] [-b RATE]\n");
+    Print(L"usage: 2048 [-c] [-C] [-a] [-A] [-i] [-I] [-r] [-h] [-H] [-s SIZE] [-b RATE]\n");
 }
 
 
 /* Initial game options */
 struct gameoptions* gameoptions_default(void)
 {
-    struct gameoptions *opt = malloc(sizeof(struct gameoptions));
+    struct gameoptions *opt = AllocatePool(sizeof(struct gameoptions));
     if (!opt) return NULL;
 
     opt->grid_height = DEFAULT_GRID_HEIGHT;
@@ -30,14 +31,18 @@ struct gameoptions* gameoptions_default(void)
 
 void gameoptions_destroy(struct gameoptions *opt)
 {
-    free(opt);
+    FreePool(opt);
 }
 
-struct gameoptions* parse_options(struct gameoptions *opt, int argc, char **argv)
+struct gameoptions* parse_options(struct gameoptions *opt, int argc, CHAR16 **argv)
 {
-    int c;
-    while ((c = getopt(argc, argv, "aArcCiIhHs:b:")) != -1) {
-        switch (c) {
+    argc--; argv++;  /* skip program name */
+    while (argc > 0) {
+	if(argv[0][0] != '-' || argv[0][1] == '\0' || argv[0][2] != '\0') {
+	    print_usage();
+            Exit(EFI_INVALID_PARAMETER, 0, NULL);
+	}
+        switch (argv[0][1]) {
         case 'a':
             opt->animate = true;
             break;
@@ -60,25 +65,36 @@ struct gameoptions* parse_options(struct gameoptions *opt, int argc, char **argv
             break;
         case 's':;
             /* Stick with square for now */
-            int optint = strtol(optarg, NULL, 10);
+	    if(argc < 2) {
+		print_usage();
+		Exit(EFI_INVALID_PARAMETER, 0, NULL);
+	    }
+            int optint = Atoi(argv[1]);
             if (optint < CONSTRAINT_GRID_MAX && optint > CONSTRAINT_GRID_MIN) {
                 opt->grid_height = optint;
                 opt->grid_width = optint;
             }
+	    argc--; argv++;
             break;
         case 'b':
-            opt->spawn_rate = strtol(optarg, NULL, 10);
+	    if(argc < 2) {
+		print_usage();
+		Exit(EFI_INVALID_PARAMETER, 0, NULL);
+	    }
+            opt->spawn_rate = Atoi(argv[1]);
+	    argc--; argv++;
             break;
         case 'r':
             highscore_reset();
-            exit(0);
+            Exit(EFI_SUCCESS, 0, NULL);
         case 'h':
             print_usage();
-            exit(0);
+            Exit(EFI_SUCCESS, 0, NULL);
         case 'H':
-            printf("%ld\n", highscore_load(NULL));
-            exit(0);
+            Print(L"%ld\n", highscore_load(NULL));
+            Exit(EFI_SUCCESS, 0, NULL);
         }
+	argc--; argv++;
     }
 
     return opt;

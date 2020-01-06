@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <getopt.h>
+#include <efi.h>
 
 #define CONSTRAINT_GRID_MIN 4
 #define CONSTRAINT_GRID_MAX 20
@@ -27,7 +28,7 @@ struct gameoptions {
 };
 
 void print_usage(void);
-struct gameoptions* parse_options(struct gameoptions*, int, char**);
+struct gameoptions* parse_options(struct gameoptions*, int, CHAR16**);
 struct gameoptions* gameoptions_default(void);
 void gameoptions_destroy(struct gameoptions *opt);
 
