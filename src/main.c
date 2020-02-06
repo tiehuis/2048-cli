@@ -30,7 +30,7 @@ int main(int argc, char **argv)
 
     
     setlocale (LC_ALL, "");
-    bindtextdomain ("gfx_terminal", targetDir("PWD","/18n/"));
+    bindtextdomain ("gfx_terminal", targetDir("PWD","/i18n/"));
     textdomain ("gfx_terminal");
 
     struct gamestate *g = gamestate_init(argc, argv);

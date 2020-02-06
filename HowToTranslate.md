@@ -39,15 +39,15 @@ for example:
 Nwe should create the directory where we'll place the .mo files (change es_AR by your language standard name):
 
 ```
-mkdir -p 18n/es_AR/LC_MESSAGES
+mkdir -p i18n/es_AR/LC_MESSAGES
 ```
 
 The last step is to generate the .mo file:
 
 ```
-msgfmt --output-file=18n/es_AR/LC_MESSAGES/gfx_curses.mo po/es_AR/gfx_curses.po
-msgfmt --output-file=18n/es_AR/LC_MESSAGES/gfx_terminal.mo po/es_AR/gfx_terminal.po
-msgfmt --output-file=18n/es_AR/LC_MESSAGES/highscore.mo po/es_AR/highscore.po
+msgfmt --output-file=i18n/es_AR/LC_MESSAGES/gfx_curses.mo po/es_AR/gfx_curses.po
+msgfmt --output-file=i18n/es_AR/LC_MESSAGES/gfx_terminal.mo po/es_AR/gfx_terminal.po
+msgfmt --output-file=i18n/es_AR/LC_MESSAGES/highscore.mo po/es_AR/highscore.po
 ```
 
 ## And this is it!
