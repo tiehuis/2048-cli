@@ -1,0 +1,55 @@
+# Chinese translations for p package.
+# Copyright (C) 2020 THE p'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the p package.
+#  <p2589660302@outlook.com>, 2020.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: p 2589\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-05-17 18:12-0300\n"
+"PO-Revision-Date: 2020-04-21 17:01+0800\n"
+"Last-Translator:  <p2589660302@outlook.com>\n"
+"Language-Team: Chinese\n"
+"Language: zh_hans\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/highscore.c:58
+#, c-format
+msgid "Are you sure you want to reset your scores? Y(es) or N(o)\n"
+msgstr "你确定要重置分数吗？是或否\n"
+
+#: src/highscore.c:76
+#, c-format
+msgid "Please enter Yes or No\n"
+msgstr "请输入是或否\n"
+
+#: src/highscore.c:95
+#, c-format
+msgid "load: Failed to open highscore file\n"
+msgstr "加载：不能打开最高分文件。\n"
+
+#: src/highscore.c:100
+#, c-format
+msgid "load: Failed to parse highscore file\n"
+msgstr "加载：不能解析最高分文件。\n"
+
+#: src/highscore.c:122
+#, c-format
+msgid "save: Failed to open highscore file\n"
+msgstr "保存：不能打开最高分文件。\n"
+
+#: src/highscore.c:127
+#, c-format
+msgid "save: Failed to write highscore file\n"
+msgstr "保存：不能写入最高分文件。\n"
+
+#: src/highscore.c:71
+msgid "y"
+msgstr "是"
+
+#: src/highscore.c:71
+msgid "yes"
+msgstr "是"
