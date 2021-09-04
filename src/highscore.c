@@ -24,21 +24,23 @@ static const char* highscore_retrieve_file(void)
                 getenv("HOME"), hs_dir_name, hs_file_name);
     }
     else {
-        return hs_file_name;
+        snprintf(buffer, sizeof(buffer), "%s/%s", getenv("PWD"), hs_file_name);
+        return buffer;
     }
 
     /* Create file only if it doesn't exist */
     if (access(buffer, F_OK) != -1)
         return buffer;
 
-    char *sep = strrchr(buffer, '/');
+    char *sep = strchr(buffer + 1, '/');
+    char *view = sep + 1;
+
     while (sep != NULL) {
         *sep = '\0';
-        if (strlen(buffer) != 0)
-            mkdir(buffer, 0777);
-        char *tmpsep = sep;
-        sep = strrchr(buffer, '/');
-        *tmpsep = '/';
+        mkdir(buffer, 0777);
+        *sep = '/';
+        sep = strchr(view, '/');
+        view = sep + 1;
     }
 
     return buffer;

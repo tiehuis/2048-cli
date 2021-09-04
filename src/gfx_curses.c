@@ -3,21 +3,23 @@
 #include <unistd.h>
 #include "gfx.h"
 #include "merge.h"
-#include <gettext.h>
+#include <libintl.h>
 #include <locale.h>
 
 #define NUMBER_OF_COLORS 7
+
+void draw_then_sleep(struct gfx_state *s, struct gamestate *g)
+{
+    gfx_draw(s, g);
+    /* Have a fixed time for each turn to animate (160 default) */
+    gfx_sleep(160 / g->opts->grid_width);
+}
 
 #define iterate(n, expression)\
     do {\
         int i;\
         for (i = 0; i < n; ++i) { expression; }\
     } while (0)
-
-struct gfx_state {
-    WINDOW *window;
-    size_t window_height, window_width;
-};
 
 struct gfx_state* gfx_init(struct gamestate *g)
 {
@@ -71,7 +73,7 @@ void gfx_draw(struct gfx_state *s, struct gamestate *g)
     if (g->score >= g->score_high)
         g->score_high = g->score;
 
-    mvwprintw(s->window, 1, 0, gettext("   Hil: %d\n"), g->score_high);
+    mvwprintw(s->window, 1, 0, gettext("   Hi: %d\n"), g->score_high);
 
     wattron(s->window, A_DIM);
     iterate(g->opts->grid_width * (g->print_width + 2) + 1, waddch(s->window, '-'));

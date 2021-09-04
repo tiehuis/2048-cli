@@ -186,7 +186,11 @@ void gamestate_new_block(struct gamestate *g)
         for (x = 0; x < g->opts->grid_width; ++x) {
             if (!g->grid[x][y]) {
                 if (p == block_number) {
+#ifdef NCURSES
+                    g->grid[x][y] = 1;
+#else
                     g->grid[x][y] = rand() & 3 ? 1 : 2;
+#endif
                     g->blocks_in_play += 1;
                     return;
                 }

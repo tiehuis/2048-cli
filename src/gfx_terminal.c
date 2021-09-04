@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <termios.h>
 #include <unistd.h>
 #include "merge.h"
 #include "gfx.h"
@@ -13,9 +12,12 @@
         for (i = 0; i < n; ++i) { expression; }\
     } while (0)
 
-struct gfx_state {
-    struct termios oldt, newt;
-};
+void draw_then_sleep(struct gfx_state *s, struct gamestate *g)
+{
+    gfx_draw(s, g);
+    /* Have a fixed time for each turn to animate (160 default) */
+    gfx_sleep(160 / g->opts->grid_width);
+}
 
 struct gfx_state* gfx_init(struct gamestate *g)
 {

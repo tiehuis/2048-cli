@@ -7,13 +7,6 @@
 #include <locale.h>
 #include <string.h>
 
-void draw_then_sleep(struct gfx_state *s, struct gamestate *g)
-{
-    gfx_draw(s, g);
-    /* Have a fixed time for each turn to animate (160 default) */
-    gfx_sleep(160 / g->opts->grid_width);
-}
-
 char *targetDir(char *env, char *path)
 {
     char *dir;
