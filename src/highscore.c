@@ -24,7 +24,8 @@ static const char* highscore_retrieve_file(void)
                 getenv("HOME"), hs_dir_name, hs_file_name);
     }
     else {
-        return hs_file_name;
+        snprintf(buffer, sizeof(buffer), "%s/%s", getenv("PWD"), hs_file_name);
+        return buffer;
     }
 
     /* Create file only if it doesn't exist */
