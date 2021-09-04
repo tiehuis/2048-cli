@@ -12,7 +12,7 @@ FILTERED_C_FILES := $(filter-out src/gfx%.c src/merge%.c, $(C_FILES))
 all: curses
 
 curses: $(FILTERED_C_FILES) src/gfx_curses.c
-	$(CC) $(CFLAGS) $(FILTERED_C_FILES) $(MERGE_FILE) src/gfx_curses.c -o $(PROGRAM) $(LDFLAGS) -lcurses
+	$(CC) $(CFLAGS) -DNCURSES $(FILTERED_C_FILES) $(MERGE_FILE) src/gfx_curses.c -o $(PROGRAM) $(LFLAGS) -lcurses
 
 terminal: $(FILTERED_C_FILES) src/gfx_terminal.c
 	$(CC) $(CFLAGS) $(FILTERED_C_FILES) $(MERGE_FILE) src/gfx_terminal.c -o $(PROGRAM) $(LDFLAGS)

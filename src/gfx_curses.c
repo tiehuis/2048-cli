@@ -8,16 +8,18 @@
 
 #define NUMBER_OF_COLORS 7
 
+void draw_then_sleep(struct gfx_state *s, struct gamestate *g)
+{
+    gfx_draw(s, g);
+    /* Have a fixed time for each turn to animate (160 default) */
+    gfx_sleep(160 / g->opts->grid_width);
+}
+
 #define iterate(n, expression)\
     do {\
         int i;\
         for (i = 0; i < n; ++i) { expression; }\
     } while (0)
-
-struct gfx_state {
-    WINDOW *window;
-    size_t window_height, window_width;
-};
 
 struct gfx_state* gfx_init(struct gamestate *g)
 {
