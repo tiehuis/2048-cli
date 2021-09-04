@@ -1,2 +1,2 @@
 language = "bash"
-run = "make && ./2048"
+run = "make && ./2048 -c"

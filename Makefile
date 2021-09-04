@@ -8,7 +8,8 @@ C_FILES := $(wildcard src/*.c)
 MERGE_FILE := src/merge_std.c
 FILTERED_C_FILES := $(filter-out src/gfx%.c src/merge%.c, $(C_FILES))
 
-all: terminal
+#all: terminal
+all: curses
 
 curses: $(FILTERED_C_FILES) src/gfx_curses.c
 	$(CC) $(CFLAGS) $(FILTERED_C_FILES) $(MERGE_FILE) src/gfx_curses.c -o $(PROGRAM) $(LDFLAGS) -lcurses
