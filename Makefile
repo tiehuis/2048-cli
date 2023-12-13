@@ -21,4 +21,25 @@ remake: clean all
 clean:
 	rm -f $(PROGRAM)
 
-.PHONY: clean remake
+# GoogleTest Setup
+GTEST_DIR := googletest-main
+GTEST_SRCS := $(wildcard $(GTEST_DIR)/src/*.cc) $(wildcard $(GTEST_DIR)/src/*.h)
+
+# Test Files
+TEST_SRCS := $(wildcard test/*.cpp)
+
+# Test Compiler Flags
+# Update the include path to point to GoogleTest's include directory
+CPPFLAGS += -isystem $(GTEST_DIR)/googletest/include -Isrc
+CXXFLAGS += -g -Wall -Wextra -pthread
+
+# Test Targets
+test: $(TEST_SRCS) $(GTEST_SRCS)
+	$(CC) $(CPPFLAGS) $(CXXFLAGS) $(TEST_SRCS) src/ai.c src/engine.c src/highscore.c src/options.c -o test_program $(LDFLAGS) -lpthread -lgtest
+
+clean-test:
+	rm -f test_program
+
+.PHONY: test clean-test
+
+
