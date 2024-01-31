@@ -14,6 +14,7 @@ Makefile entry.
 
 ### Get
     git clone https://github.com/tiehuis/2048-cli.git
+    cd 2048-cli
     make
 
 By default, termios.h is expected to be present for the standard terminal
